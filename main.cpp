@@ -57,6 +57,8 @@ void CONSTRUCTCPN() {
 //    graph->Generate();
 //    cout<<"STATE SPACE SIZE: "<<graph->nodecount<<endl;
 //    cpnRG = graph;
+//    delete graph;
+//    delete cpnet;
 }
 
 void CHECKLTL(bool cardinality) {
@@ -229,8 +231,8 @@ int main() {
     CHECKMEM();
 
     CONSTRUCTCPN();
-    CHECKLTL(1,14);
-//    CHECKLTL(0);
+    CHECKLTL(1);
+    CHECKLTL(0);
 
     return 0;
 }

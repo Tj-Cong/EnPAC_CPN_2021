@@ -25,6 +25,8 @@ ProductState::ProductState() {
 void ProductState::getNextRGChild(bool &exist) {
     if(RGname_ptr->Binding_Available == false) {
         RGname_ptr->all_FireableBindings();
+        if(ready2exit)
+            return;
     }
 
     if(virgin) {

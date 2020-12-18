@@ -18,7 +18,7 @@ class binding;
 class BindingList;
 int stringToNum(const string& str);
 extern CPN *cpn;
-
+extern bool ready2exit;
 enum nodetype{Root,Boolean,Relation,variable,useroperator,finiteintrangeconstant};
 
 /***********************************************************************/

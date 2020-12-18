@@ -22,7 +22,9 @@ bool binding::completeness(vector<VARID> &unassignedvar) const {
 
 void binding::printBinding(string &str) {
     str = "<";
-    for(int i=0;i<cpn->varcount-1;++i) {
+    if(cpn->transition[tranid].relvararray.size()==0)
+        return;
+    for(int i=0;i<cpn->transition[tranid].relvararray.size()-1;++i) {
         if(vararray[i]!=MAXCOLORID) {
             str += VarTable::vartable[i].id + "=" + to_string(vararray[i])+",";
         }
@@ -30,7 +32,7 @@ void binding::printBinding(string &str) {
             str += VarTable::vartable[i].id + "=" + "-,";
         }
     }
-    if(vararray[cpn->varcount-1]!=MAXCOLORID) {
+    if(vararray[cpn->transition[tranid].relvararray.size()-1]!=MAXCOLORID) {
         str += VarTable::vartable[cpn->varcount-1].id + "=" +to_string(vararray[cpn->varcount-1]);
     }
     else {
@@ -69,6 +71,32 @@ binding::binding(const binding &b) {
 
 binding::~binding() {
     delete [] vararray;
+}
+
+void binding::compress() {
+    if(cpn->transition[tranid].relvararray.size() == 0) {
+        delete [] vararray;
+        vararray = NULL;
+        return;
+    }
+
+    COLORID *condense = new COLORID [cpn->transition[tranid].relvararray.size()];
+    vector<VARID>::const_iterator iter;
+    int i;
+    for(i=0,iter=cpn->transition[tranid].relvararray.begin();iter!=cpn->transition[tranid].relvararray.end();++iter,++i) {
+        condense[i] = vararray[*iter];
+    }
+
+    delete [] vararray;
+    vararray = condense;
+}
+
+void binding::decompress(COLORID *varvec) {
+    vector<VARID>::const_iterator iter;
+    int i;
+    for(i=0,iter=cpn->transition[tranid].relvararray.begin();iter!=cpn->transition[tranid].relvararray.end();++iter,++i) {
+        varvec[*iter] = vararray[i];
+    }
 }
 
 BindingList::BindingList() {
@@ -286,8 +314,11 @@ void CPN_RGNode::all_FireableBindings() {
 
     for(SHORTIDX i=0;i<cpn->transitioncount;++i) {
         tran_FireableBindings(i);
+        if(ready2exit)
+            return;
     }
     Binding_Available = true;
+    compress();
 }
 
 void CPN_RGNode::tran_FireableBindings(SHORTIDX tranid) {
@@ -305,6 +336,10 @@ void CPN_RGNode::tran_FireableBindings(SHORTIDX tranid) {
 
     for(int i=1;i<tran.producer.size();++i) {
         if(tran.producer[i].arc_exp.get_IBS(marking[tran.producer[i].idx],bindingList[i-1],bindingList[i])!=SUCCESS) {
+            delete [] bindingList;
+            return;
+        }
+        if(ready2exit) {
             delete [] bindingList;
             return;
         }
@@ -344,6 +379,15 @@ void CPN_RGNode::tran_FireableBindings(SHORTIDX tranid) {
         }
     }
     delete [] bindingList;
+}
+
+void CPN_RGNode::compress() {
+    binding *p = enbindings.listhead->next;
+    while (p) {
+        p->compress();
+        p=p->next;
+    }
+    MallocExtension::instance()->ReleaseFreeMemory();
 }
 
 void CPN_RGNode::complete(const vector<VARID> unassignedvar,int level,binding *inbind) {
@@ -428,7 +472,7 @@ CPN_RG::~CPN_RG() {
         }
     }
     delete [] markingtable;
-//    MallocExtension::instance()->ReleaseFreeMemory();
+    MallocExtension::instance()->ReleaseFreeMemory();
 }
 
 void CPN_RG::addRGNode(CPN_RGNode *state) {
@@ -508,16 +552,22 @@ CPN_RGNode *CPN_RG::RGNode_Child(CPN_RGNode *curstate, binding *bind, bool &exis
 
     CPN_Transition &tran = cpn->transition[bind->tranid];
     vector<CSArc>::iterator front;
+    COLORID varvec[MAXVARNUM];
+    for(int i=0;i<MAXVARNUM;++i) {
+        varvec[i] = MAXCOLORID;
+    }
+    bind->decompress(varvec);
+
     for(front=tran.producer.begin();front!=tran.producer.end();++front) {
         Multiset arcms;
-        front->arc_exp.to_Multiset(arcms,bind->vararray);
+        front->arc_exp.to_Multiset(arcms,varvec);
         MINUS(child->marking[front->idx],arcms);
     }
 
     vector<CSArc>::iterator rear;
     for(rear=tran.consumer.begin();rear!=tran.consumer.end();++rear) {
         Multiset arcms;
-        rear->arc_exp.to_Multiset(arcms,bind->vararray);
+        rear->arc_exp.to_Multiset(arcms,varvec);
         PLUS(child->marking[rear->idx],arcms);
     }
 

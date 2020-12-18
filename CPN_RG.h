@@ -10,9 +10,11 @@
 
 #define CPNRGTABLE_SIZE 1048576
 #define random(x) rand()%(x)
+#define MAXVARNUM 30
 
 extern CPN *cpn;
 extern bool consistency;
+extern bool ready2exit;
 class CPN_Product_Automata;
 
 enum InsertStrategy{byorder,byhead};
@@ -40,6 +42,8 @@ public:
      * @parm vid (out)
      * */
     bool completeness(vector<VARID> &unassignedvar) const;
+    void compress();
+    void decompress(COLORID *varvec);
     void printBinding(string &str);
     bool operator > (const binding &otherbind);
 };
@@ -73,6 +77,7 @@ public:
     void all_FireableBindings();
     void tran_FireableBindings(SHORTIDX tranid);
     void complete(const vector<VARID> unassignedvar,int level,binding *inbind);
+    void compress();
     void printMarking();
     bool isfirable(string transname);
     bool operator == (const CPN_RGNode &state);

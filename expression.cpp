@@ -1068,6 +1068,8 @@ int hlinscription::multiset_match(const Multiset &marking, const BindingList &gi
     binding *p = givenIBS.listhead->next;
     while (p) {
         arcmeta_multiset_match(0,retIBS,p->vararray,marking);
+        if(ready2exit)
+            return FAIL;
         p=p->next;
     }
 
@@ -1107,6 +1109,8 @@ void hlinscription::arcmeta_multiset_match(int arcmetanum,BindingList &IBS,const
         if(arcmeta_pattern_match(arcmeta,p,temp)==SUCCESS) {
             arcmeta_multiset_match(arcmetanum+1,IBS,temp,marking);
         }
+        if(ready2exit)
+            return;
         p=p->next;
     }
     delete [] temp;
