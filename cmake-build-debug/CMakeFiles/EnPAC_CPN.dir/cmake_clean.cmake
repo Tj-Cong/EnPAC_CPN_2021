@@ -1,6 +1,7 @@
 file(REMOVE_RECURSE
   "CMakeFiles/EnPAC_CPN.dir/BA/Syntax_Tree.cpp.o"
   "CMakeFiles/EnPAC_CPN.dir/BA/VWAA.cpp.o"
+  "CMakeFiles/EnPAC_CPN.dir/BA/atomic.cpp.o"
   "CMakeFiles/EnPAC_CPN.dir/BA/buchi.cpp.o"
   "CMakeFiles/EnPAC_CPN.dir/BA/tinystr.cpp.o"
   "CMakeFiles/EnPAC_CPN.dir/BA/tinyxml.cpp.o"

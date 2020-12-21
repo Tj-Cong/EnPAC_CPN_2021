@@ -6,6 +6,7 @@ set(CMAKE_DEPENDS_LANGUAGES
 set(CMAKE_DEPENDS_CHECK_CXX
   "/home/hecong/文档/EnPAC-CPN/BA/Syntax_Tree.cpp" "/home/hecong/文档/EnPAC-CPN/cmake-build-debug/CMakeFiles/EnPAC_CPN.dir/BA/Syntax_Tree.cpp.o"
   "/home/hecong/文档/EnPAC-CPN/BA/VWAA.cpp" "/home/hecong/文档/EnPAC-CPN/cmake-build-debug/CMakeFiles/EnPAC_CPN.dir/BA/VWAA.cpp.o"
+  "/home/hecong/文档/EnPAC-CPN/BA/atomic.cpp" "/home/hecong/文档/EnPAC-CPN/cmake-build-debug/CMakeFiles/EnPAC_CPN.dir/BA/atomic.cpp.o"
   "/home/hecong/文档/EnPAC-CPN/BA/buchi.cpp" "/home/hecong/文档/EnPAC-CPN/cmake-build-debug/CMakeFiles/EnPAC_CPN.dir/BA/buchi.cpp.o"
   "/home/hecong/文档/EnPAC-CPN/BA/tinystr.cpp" "/home/hecong/文档/EnPAC-CPN/cmake-build-debug/CMakeFiles/EnPAC_CPN.dir/BA/tinystr.cpp.o"
   "/home/hecong/文档/EnPAC-CPN/BA/tinyxml.cpp" "/home/hecong/文档/EnPAC-CPN/cmake-build-debug/CMakeFiles/EnPAC_CPN.dir/BA/tinyxml.cpp.o"

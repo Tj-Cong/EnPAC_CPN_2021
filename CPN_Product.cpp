@@ -30,7 +30,7 @@ void ProductState::getNextRGChild(bool &exist) {
     }
 
     if(virgin) {
-        fireBinding = RGname_ptr->enbindings.listhead->next;
+        fireBinding = RGname_ptr->enbindings.listhead;
         cur_RGchild = fireBinding==NULL ? NULL:cpnRG->RGNode_Child(RGname_ptr,fireBinding,exist);
         virgin = false;
         return;
@@ -323,6 +323,77 @@ bool CPN_Product_Automata::isLabel(CPN_RGNode *state, int sj) {
     return true;
 }
 
+bool CPN_Product_Automata::newisLabel(CPN_RGNode *state, int sj) {
+    if (ba->vertics[sj].invalid)
+        return false;
+    if (ba->vertics[sj].label == "true")
+        return true;
+
+    atomictable &AT = *(ba->pAT);
+    const vector<Atomic> &links = ba->vertics[sj].links;
+    Atomic temp;
+    int atomic_num = links.size();
+    bool atomicTrue = false;
+
+    for (int i = 0; i < atomic_num; i++){
+        temp = links[i];
+
+        if (AT.atomics[temp.atomicmeta_link].mytype == PT_FIREABILITY)
+            //call F handle
+            atomicTrue = checkLTLF(state, AT.atomics[temp.atomicmeta_link]);
+        else if (AT.atomics[temp.atomicmeta_link].mytype == PT_CARDINALITY)
+            //call C handle
+            atomicTrue = checkLTLC(state, AT.atomics[temp.atomicmeta_link]);
+
+        if ((atomicTrue&&temp.negation)||(!atomicTrue&&!temp.negation)) {
+            return false;
+        }
+    }
+    return true;
+}
+
+bool CPN_Product_Automata::checkLTLF(CPN_RGNode *state, atomicmeta &am) {
+    bool ans = false;
+    int t_num = am.fires.size();
+    for(int i=0;i<t_num;++i) {
+        if(state->isfirable(am.fires[i])) {
+            ans = true;
+            break;
+        }
+    }
+    return ans;
+}
+
+bool CPN_Product_Automata::checkLTLC(CPN_RGNode *state, atomicmeta &am) {
+    NUM_t left = 0;
+    NUM_t right = 0;
+    const cardmeta *p;
+
+    //left
+    if (am.leftexp.constnum != -1)
+        left = am.leftexp.constnum;
+    else {
+        p = am.leftexp.expression;
+        while (p) {
+            left += state->readPlace(p->placeid);
+            p = p->next;
+        }
+    }
+
+    //right
+    if (am.rightexp.constnum != -1)
+        right = am.rightexp.constnum;
+    else {
+        p = am.rightexp.expression;
+        while (p) {
+            right += state->readPlace(p->placeid);
+            p = p->next;
+        }
+    }
+
+    return left <= right;
+}
+
 bool CPN_Product_Automata::judgeF(string s) {
     int pos = s.find("<=");
     if (pos == string::npos)
@@ -486,7 +557,7 @@ ProductState *CPN_Product_Automata::getNextChild(ProductState *curstate) {
         {
             if(ready2exit)
                 return NULL;
-            if(isLabel(curstate->cur_RGchild,curstate->pba->destination))
+            if(newisLabel(curstate->cur_RGchild,curstate->pba->destination))
             {
                 //能够生成交状态
                 ProductState *qs = new ProductState;
@@ -517,7 +588,7 @@ ProductState *CPN_Product_Automata::getNextChild(ProductState *curstate) {
         {
             if(ready2exit)
                 return NULL;
-            if(isLabel(rgseed,curstate->pba->destination))
+            if(newisLabel(rgseed,curstate->pba->destination))
             {
                 //能够生成交状态
                 ProductState *qs = new ProductState;
@@ -647,7 +718,7 @@ void CPN_Product_Automata::getinitial_status() {
             continue;
         if(ba->vertics[i].initial)
         {
-            if(isLabel(cpnRG->initnode,i))
+            if(newisLabel(cpnRG->initnode,i))
             {
                 ProductState ps;
                 ps.BAname_id = i;

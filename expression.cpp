@@ -701,7 +701,7 @@ void hlinscription::to_Multiset(arcnode *node,Multiset &ms,const COLORID *Bindin
 
             getTupleColor(node,bindingList,Binding);
 
-            binding *p = bindingList.listhead->next;
+            binding *p = bindingList.listhead;
             while (p) {
                 /*anomaly detection*/
                 for(int i=0;i<psnum;++i) {
@@ -805,7 +805,7 @@ void hlinscription::getTupleColor(arcnode *node, BindingList &bindingList, const
         else {
             cid = cid-1;
         }
-        binding *p = bindingList.listhead->next;
+        binding *p = bindingList.listhead;
         while (p) {
             p->vararray[node->leftnode->position] = cid;
             p=p->next;
@@ -823,7 +823,7 @@ void hlinscription::getTupleColor(arcnode *node, BindingList &bindingList, const
         /*calculate new color*/
         cid = (cid+1) % SortTable::usersort[node->leftnode->sid].feconstnum;
 
-        binding *p = bindingList.listhead->next;
+        binding *p = bindingList.listhead;
         while(p) {
             p->vararray[node->leftnode->position] = cid;
             p=p->next;
@@ -832,7 +832,7 @@ void hlinscription::getTupleColor(arcnode *node, BindingList &bindingList, const
     else if(node->mytype == all) {
         if(node->tid == usersort) {
             int feconstnum = SortTable::usersort[node->sid].feconstnum;
-            binding *p = bindingList.listhead->next;
+            binding *p = bindingList.listhead;
             while (p) {
                 p->vararray[node->position] = 0;
                 for(int i=1; i<feconstnum; ++i) {
@@ -846,7 +846,7 @@ void hlinscription::getTupleColor(arcnode *node, BindingList &bindingList, const
         else if(node->tid == finiteintrange) {
             int start = SortTable::finitintrange[node->sid].start;
             int end = SortTable::finitintrange[node->sid].end;
-            binding *p = bindingList.listhead->next;
+            binding *p = bindingList.listhead;
             while (p) {
                 p->vararray[node->position] = start;
                 for(int i=start+1;i<=end;++i) {
@@ -872,14 +872,14 @@ void hlinscription::getTupleColor(arcnode *node, BindingList &bindingList, const
             exit(-1);
         }
 
-        binding *p = bindingList.listhead->next;
+        binding *p = bindingList.listhead;
         while (p) {
             p->vararray[node->position] = node->number;
             p=p->next;
         }
     }
     else if(node->mytype == var) {
-        binding *p = bindingList.listhead->next;
+        binding *p = bindingList.listhead;
         while (p) {
             p->vararray[node->position] = vararray[node->number];
             p=p->next;
@@ -1065,7 +1065,7 @@ int hlinscription::multiset_match(const Multiset &marking, const BindingList &gi
     }
 
     /*3.match begins*/
-    binding *p = givenIBS.listhead->next;
+    binding *p = givenIBS.listhead;
     while (p) {
         arcmeta_multiset_match(0,retIBS,p->vararray,marking);
         if(ready2exit)
@@ -1375,7 +1375,7 @@ void hlinscription::TokenSum(arcnode *node) {
  * */
 int hlinscription::variable_enumeration(const Multiset &marking, const BindingList &givenIBS, BindingList &retIBS) {
 
-    binding *p=givenIBS.listhead->next;
+    binding *p=givenIBS.listhead;
     COLORID *inbinding = new COLORID [cpn->varcount];
     while (p) {
         memcpy(inbinding,p->vararray,sizeof(COLORID)*cpn->varcount);

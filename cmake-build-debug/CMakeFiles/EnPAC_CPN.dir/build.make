@@ -77,9 +77,22 @@ include CMakeFiles/EnPAC_CPN.dir/progress.make
 # Include the compile flags for this target's objects.
 include CMakeFiles/EnPAC_CPN.dir/flags.make
 
+CMakeFiles/EnPAC_CPN.dir/BA/atomic.cpp.o: CMakeFiles/EnPAC_CPN.dir/flags.make
+CMakeFiles/EnPAC_CPN.dir/BA/atomic.cpp.o: ../BA/atomic.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/hecong/文档/EnPAC-CPN/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/EnPAC_CPN.dir/BA/atomic.cpp.o"
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/EnPAC_CPN.dir/BA/atomic.cpp.o -c /home/hecong/文档/EnPAC-CPN/BA/atomic.cpp
+
+CMakeFiles/EnPAC_CPN.dir/BA/atomic.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/EnPAC_CPN.dir/BA/atomic.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/hecong/文档/EnPAC-CPN/BA/atomic.cpp > CMakeFiles/EnPAC_CPN.dir/BA/atomic.cpp.i
+
+CMakeFiles/EnPAC_CPN.dir/BA/atomic.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/EnPAC_CPN.dir/BA/atomic.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/hecong/文档/EnPAC-CPN/BA/atomic.cpp -o CMakeFiles/EnPAC_CPN.dir/BA/atomic.cpp.s
+
 CMakeFiles/EnPAC_CPN.dir/BA/Syntax_Tree.cpp.o: CMakeFiles/EnPAC_CPN.dir/flags.make
 CMakeFiles/EnPAC_CPN.dir/BA/Syntax_Tree.cpp.o: ../BA/Syntax_Tree.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/hecong/文档/EnPAC-CPN/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/EnPAC_CPN.dir/BA/Syntax_Tree.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/hecong/文档/EnPAC-CPN/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/EnPAC_CPN.dir/BA/Syntax_Tree.cpp.o"
 	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/EnPAC_CPN.dir/BA/Syntax_Tree.cpp.o -c /home/hecong/文档/EnPAC-CPN/BA/Syntax_Tree.cpp
 
 CMakeFiles/EnPAC_CPN.dir/BA/Syntax_Tree.cpp.i: cmake_force
@@ -92,7 +105,7 @@ CMakeFiles/EnPAC_CPN.dir/BA/Syntax_Tree.cpp.s: cmake_force
 
 CMakeFiles/EnPAC_CPN.dir/BA/VWAA.cpp.o: CMakeFiles/EnPAC_CPN.dir/flags.make
 CMakeFiles/EnPAC_CPN.dir/BA/VWAA.cpp.o: ../BA/VWAA.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/hecong/文档/EnPAC-CPN/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/EnPAC_CPN.dir/BA/VWAA.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/hecong/文档/EnPAC-CPN/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/EnPAC_CPN.dir/BA/VWAA.cpp.o"
 	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/EnPAC_CPN.dir/BA/VWAA.cpp.o -c /home/hecong/文档/EnPAC-CPN/BA/VWAA.cpp
 
 CMakeFiles/EnPAC_CPN.dir/BA/VWAA.cpp.i: cmake_force
@@ -105,7 +118,7 @@ CMakeFiles/EnPAC_CPN.dir/BA/VWAA.cpp.s: cmake_force
 
 CMakeFiles/EnPAC_CPN.dir/BA/buchi.cpp.o: CMakeFiles/EnPAC_CPN.dir/flags.make
 CMakeFiles/EnPAC_CPN.dir/BA/buchi.cpp.o: ../BA/buchi.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/hecong/文档/EnPAC-CPN/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/EnPAC_CPN.dir/BA/buchi.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/hecong/文档/EnPAC-CPN/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object CMakeFiles/EnPAC_CPN.dir/BA/buchi.cpp.o"
 	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/EnPAC_CPN.dir/BA/buchi.cpp.o -c /home/hecong/文档/EnPAC-CPN/BA/buchi.cpp
 
 CMakeFiles/EnPAC_CPN.dir/BA/buchi.cpp.i: cmake_force
@@ -118,7 +131,7 @@ CMakeFiles/EnPAC_CPN.dir/BA/buchi.cpp.s: cmake_force
 
 CMakeFiles/EnPAC_CPN.dir/BA/tinystr.cpp.o: CMakeFiles/EnPAC_CPN.dir/flags.make
 CMakeFiles/EnPAC_CPN.dir/BA/tinystr.cpp.o: ../BA/tinystr.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/hecong/文档/EnPAC-CPN/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object CMakeFiles/EnPAC_CPN.dir/BA/tinystr.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/hecong/文档/EnPAC-CPN/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building CXX object CMakeFiles/EnPAC_CPN.dir/BA/tinystr.cpp.o"
 	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/EnPAC_CPN.dir/BA/tinystr.cpp.o -c /home/hecong/文档/EnPAC-CPN/BA/tinystr.cpp
 
 CMakeFiles/EnPAC_CPN.dir/BA/tinystr.cpp.i: cmake_force
@@ -131,7 +144,7 @@ CMakeFiles/EnPAC_CPN.dir/BA/tinystr.cpp.s: cmake_force
 
 CMakeFiles/EnPAC_CPN.dir/BA/tinyxml.cpp.o: CMakeFiles/EnPAC_CPN.dir/flags.make
 CMakeFiles/EnPAC_CPN.dir/BA/tinyxml.cpp.o: ../BA/tinyxml.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/hecong/文档/EnPAC-CPN/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building CXX object CMakeFiles/EnPAC_CPN.dir/BA/tinyxml.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/hecong/文档/EnPAC-CPN/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Building CXX object CMakeFiles/EnPAC_CPN.dir/BA/tinyxml.cpp.o"
 	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/EnPAC_CPN.dir/BA/tinyxml.cpp.o -c /home/hecong/文档/EnPAC-CPN/BA/tinyxml.cpp
 
 CMakeFiles/EnPAC_CPN.dir/BA/tinyxml.cpp.i: cmake_force
@@ -144,7 +157,7 @@ CMakeFiles/EnPAC_CPN.dir/BA/tinyxml.cpp.s: cmake_force
 
 CMakeFiles/EnPAC_CPN.dir/BA/tinyxmlerror.cpp.o: CMakeFiles/EnPAC_CPN.dir/flags.make
 CMakeFiles/EnPAC_CPN.dir/BA/tinyxmlerror.cpp.o: ../BA/tinyxmlerror.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/hecong/文档/EnPAC-CPN/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Building CXX object CMakeFiles/EnPAC_CPN.dir/BA/tinyxmlerror.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/hecong/文档/EnPAC-CPN/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Building CXX object CMakeFiles/EnPAC_CPN.dir/BA/tinyxmlerror.cpp.o"
 	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/EnPAC_CPN.dir/BA/tinyxmlerror.cpp.o -c /home/hecong/文档/EnPAC-CPN/BA/tinyxmlerror.cpp
 
 CMakeFiles/EnPAC_CPN.dir/BA/tinyxmlerror.cpp.i: cmake_force
@@ -157,7 +170,7 @@ CMakeFiles/EnPAC_CPN.dir/BA/tinyxmlerror.cpp.s: cmake_force
 
 CMakeFiles/EnPAC_CPN.dir/BA/tinyxmlparser.cpp.o: CMakeFiles/EnPAC_CPN.dir/flags.make
 CMakeFiles/EnPAC_CPN.dir/BA/tinyxmlparser.cpp.o: ../BA/tinyxmlparser.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/hecong/文档/EnPAC-CPN/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Building CXX object CMakeFiles/EnPAC_CPN.dir/BA/tinyxmlparser.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/hecong/文档/EnPAC-CPN/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_8) "Building CXX object CMakeFiles/EnPAC_CPN.dir/BA/tinyxmlparser.cpp.o"
 	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/EnPAC_CPN.dir/BA/tinyxmlparser.cpp.o -c /home/hecong/文档/EnPAC-CPN/BA/tinyxmlparser.cpp
 
 CMakeFiles/EnPAC_CPN.dir/BA/tinyxmlparser.cpp.i: cmake_force
@@ -170,7 +183,7 @@ CMakeFiles/EnPAC_CPN.dir/BA/tinyxmlparser.cpp.s: cmake_force
 
 CMakeFiles/EnPAC_CPN.dir/main.cpp.o: CMakeFiles/EnPAC_CPN.dir/flags.make
 CMakeFiles/EnPAC_CPN.dir/main.cpp.o: ../main.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/hecong/文档/EnPAC-CPN/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_8) "Building CXX object CMakeFiles/EnPAC_CPN.dir/main.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/hecong/文档/EnPAC-CPN/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_9) "Building CXX object CMakeFiles/EnPAC_CPN.dir/main.cpp.o"
 	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/EnPAC_CPN.dir/main.cpp.o -c /home/hecong/文档/EnPAC-CPN/main.cpp
 
 CMakeFiles/EnPAC_CPN.dir/main.cpp.i: cmake_force
@@ -183,7 +196,7 @@ CMakeFiles/EnPAC_CPN.dir/main.cpp.s: cmake_force
 
 CMakeFiles/EnPAC_CPN.dir/expression.cpp.o: CMakeFiles/EnPAC_CPN.dir/flags.make
 CMakeFiles/EnPAC_CPN.dir/expression.cpp.o: ../expression.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/hecong/文档/EnPAC-CPN/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_9) "Building CXX object CMakeFiles/EnPAC_CPN.dir/expression.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/hecong/文档/EnPAC-CPN/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_10) "Building CXX object CMakeFiles/EnPAC_CPN.dir/expression.cpp.o"
 	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/EnPAC_CPN.dir/expression.cpp.o -c /home/hecong/文档/EnPAC-CPN/expression.cpp
 
 CMakeFiles/EnPAC_CPN.dir/expression.cpp.i: cmake_force
@@ -196,7 +209,7 @@ CMakeFiles/EnPAC_CPN.dir/expression.cpp.s: cmake_force
 
 CMakeFiles/EnPAC_CPN.dir/sort.cpp.o: CMakeFiles/EnPAC_CPN.dir/flags.make
 CMakeFiles/EnPAC_CPN.dir/sort.cpp.o: ../sort.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/hecong/文档/EnPAC-CPN/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_10) "Building CXX object CMakeFiles/EnPAC_CPN.dir/sort.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/hecong/文档/EnPAC-CPN/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_11) "Building CXX object CMakeFiles/EnPAC_CPN.dir/sort.cpp.o"
 	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/EnPAC_CPN.dir/sort.cpp.o -c /home/hecong/文档/EnPAC-CPN/sort.cpp
 
 CMakeFiles/EnPAC_CPN.dir/sort.cpp.i: cmake_force
@@ -209,7 +222,7 @@ CMakeFiles/EnPAC_CPN.dir/sort.cpp.s: cmake_force
 
 CMakeFiles/EnPAC_CPN.dir/CPN.cpp.o: CMakeFiles/EnPAC_CPN.dir/flags.make
 CMakeFiles/EnPAC_CPN.dir/CPN.cpp.o: ../CPN.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/hecong/文档/EnPAC-CPN/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_11) "Building CXX object CMakeFiles/EnPAC_CPN.dir/CPN.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/hecong/文档/EnPAC-CPN/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_12) "Building CXX object CMakeFiles/EnPAC_CPN.dir/CPN.cpp.o"
 	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/EnPAC_CPN.dir/CPN.cpp.o -c /home/hecong/文档/EnPAC-CPN/CPN.cpp
 
 CMakeFiles/EnPAC_CPN.dir/CPN.cpp.i: cmake_force
@@ -222,7 +235,7 @@ CMakeFiles/EnPAC_CPN.dir/CPN.cpp.s: cmake_force
 
 CMakeFiles/EnPAC_CPN.dir/CPN_RG.cpp.o: CMakeFiles/EnPAC_CPN.dir/flags.make
 CMakeFiles/EnPAC_CPN.dir/CPN_RG.cpp.o: ../CPN_RG.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/hecong/文档/EnPAC-CPN/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_12) "Building CXX object CMakeFiles/EnPAC_CPN.dir/CPN_RG.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/hecong/文档/EnPAC-CPN/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_13) "Building CXX object CMakeFiles/EnPAC_CPN.dir/CPN_RG.cpp.o"
 	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/EnPAC_CPN.dir/CPN_RG.cpp.o -c /home/hecong/文档/EnPAC-CPN/CPN_RG.cpp
 
 CMakeFiles/EnPAC_CPN.dir/CPN_RG.cpp.i: cmake_force
@@ -235,7 +248,7 @@ CMakeFiles/EnPAC_CPN.dir/CPN_RG.cpp.s: cmake_force
 
 CMakeFiles/EnPAC_CPN.dir/CPN_Product.cpp.o: CMakeFiles/EnPAC_CPN.dir/flags.make
 CMakeFiles/EnPAC_CPN.dir/CPN_Product.cpp.o: ../CPN_Product.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/hecong/文档/EnPAC-CPN/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_13) "Building CXX object CMakeFiles/EnPAC_CPN.dir/CPN_Product.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/hecong/文档/EnPAC-CPN/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_14) "Building CXX object CMakeFiles/EnPAC_CPN.dir/CPN_Product.cpp.o"
 	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/EnPAC_CPN.dir/CPN_Product.cpp.o -c /home/hecong/文档/EnPAC-CPN/CPN_Product.cpp
 
 CMakeFiles/EnPAC_CPN.dir/CPN_Product.cpp.i: cmake_force
@@ -248,6 +261,7 @@ CMakeFiles/EnPAC_CPN.dir/CPN_Product.cpp.s: cmake_force
 
 # Object files for target EnPAC_CPN
 EnPAC_CPN_OBJECTS = \
+"CMakeFiles/EnPAC_CPN.dir/BA/atomic.cpp.o" \
 "CMakeFiles/EnPAC_CPN.dir/BA/Syntax_Tree.cpp.o" \
 "CMakeFiles/EnPAC_CPN.dir/BA/VWAA.cpp.o" \
 "CMakeFiles/EnPAC_CPN.dir/BA/buchi.cpp.o" \
@@ -265,6 +279,7 @@ EnPAC_CPN_OBJECTS = \
 # External object files for target EnPAC_CPN
 EnPAC_CPN_EXTERNAL_OBJECTS =
 
+EnPAC_CPN: CMakeFiles/EnPAC_CPN.dir/BA/atomic.cpp.o
 EnPAC_CPN: CMakeFiles/EnPAC_CPN.dir/BA/Syntax_Tree.cpp.o
 EnPAC_CPN: CMakeFiles/EnPAC_CPN.dir/BA/VWAA.cpp.o
 EnPAC_CPN: CMakeFiles/EnPAC_CPN.dir/BA/buchi.cpp.o
@@ -280,7 +295,7 @@ EnPAC_CPN: CMakeFiles/EnPAC_CPN.dir/CPN_RG.cpp.o
 EnPAC_CPN: CMakeFiles/EnPAC_CPN.dir/CPN_Product.cpp.o
 EnPAC_CPN: CMakeFiles/EnPAC_CPN.dir/build.make
 EnPAC_CPN: CMakeFiles/EnPAC_CPN.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/hecong/文档/EnPAC-CPN/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_14) "Linking CXX executable EnPAC_CPN"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/hecong/文档/EnPAC-CPN/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_15) "Linking CXX executable EnPAC_CPN"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/EnPAC_CPN.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.

@@ -1,8 +1,8 @@
 //
 // Created by hecong on 2020/7/30.
 //
-#ifndef ENPAC_2021_VWAA_H
-#define ENPAC_2021_VWAA_H
+#ifndef ENPAC_CPN_VWAA_H
+#define ENPAC_CPN_VWAA_H
 
 #include "set.h"
 #include <vector>
@@ -49,4 +49,5 @@ vector<VWAA_delta> operator + (const vector<VWAA_delta> &l1, const vector<VWAA_d
  * l1*l2={(p&&!r&&q,GFp&&G!r),(p,GFp&&F(q&&G!r)),(!r&&q,G!r&&GFp&&fp),(tt,GFp&&Fp&&F(q&&G!r))}
  * */
 vector<VWAA_delta> operator * (const vector<VWAA_delta> &l1, const vector<VWAA_delta> &l2);
-#endif //ENPAC_2021_VWAA_H
+
+#endif

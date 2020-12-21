@@ -532,3 +532,25 @@ CPN::~CPN() {
     delete [] transition;
     delete [] arc;
 }
+
+index_t CPN::getPPosition(string str) {
+    map<string,index_t>::iterator idx_p;
+    idx_p = mapPlace.find(str);
+    if(idx_p == mapPlace.end()) {
+        return INDEX_ERROR;
+    }
+    else {
+        return idx_p->second;
+    }
+}
+
+index_t CPN::getTPosition(string str) {
+    map<string,index_t>::iterator idx_t;
+    idx_t = mapTransition.find(str);
+    if(idx_t == mapTransition.end()) {
+        return INDEX_ERROR;
+    }
+    else {
+        return idx_t->second;
+    }
+}

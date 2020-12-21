@@ -197,6 +197,33 @@ BA/VWAA.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/EnPAC_CPN.dir/build.make CMakeFiles/EnPAC_CPN.dir/BA/VWAA.cpp.s
 .PHONY : BA/VWAA.cpp.s
 
+BA/atomic.o: BA/atomic.cpp.o
+
+.PHONY : BA/atomic.o
+
+# target to build an object file
+BA/atomic.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/EnPAC_CPN.dir/build.make CMakeFiles/EnPAC_CPN.dir/BA/atomic.cpp.o
+.PHONY : BA/atomic.cpp.o
+
+BA/atomic.i: BA/atomic.cpp.i
+
+.PHONY : BA/atomic.i
+
+# target to preprocess a source file
+BA/atomic.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/EnPAC_CPN.dir/build.make CMakeFiles/EnPAC_CPN.dir/BA/atomic.cpp.i
+.PHONY : BA/atomic.cpp.i
+
+BA/atomic.s: BA/atomic.cpp.s
+
+.PHONY : BA/atomic.s
+
+# target to generate assembly for a file
+BA/atomic.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/EnPAC_CPN.dir/build.make CMakeFiles/EnPAC_CPN.dir/BA/atomic.cpp.s
+.PHONY : BA/atomic.cpp.s
+
 BA/buchi.o: BA/buchi.cpp.o
 
 .PHONY : BA/buchi.o
@@ -509,6 +536,9 @@ help:
 	@echo "... BA/VWAA.o"
 	@echo "... BA/VWAA.i"
 	@echo "... BA/VWAA.s"
+	@echo "... BA/atomic.o"
+	@echo "... BA/atomic.i"
+	@echo "... BA/atomic.s"
 	@echo "... BA/buchi.o"
 	@echo "... BA/buchi.i"
 	@echo "... BA/buchi.s"

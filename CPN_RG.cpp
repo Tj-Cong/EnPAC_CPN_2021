@@ -70,37 +70,38 @@ binding::binding(const binding &b) {
 }
 
 binding::~binding() {
-    delete [] vararray;
-}
-
-void binding::compress() {
-    if(cpn->transition[tranid].relvararray.size() == 0) {
+    if(vararray != NULL)
         delete [] vararray;
-        vararray = NULL;
-        return;
-    }
-
-    COLORID *condense = new COLORID [cpn->transition[tranid].relvararray.size()];
-    vector<VARID>::const_iterator iter;
-    int i;
-    for(i=0,iter=cpn->transition[tranid].relvararray.begin();iter!=cpn->transition[tranid].relvararray.end();++iter,++i) {
-        condense[i] = vararray[*iter];
-    }
-
-    delete [] vararray;
-    vararray = condense;
 }
 
-void binding::decompress(COLORID *varvec) {
-    vector<VARID>::const_iterator iter;
-    int i;
-    for(i=0,iter=cpn->transition[tranid].relvararray.begin();iter!=cpn->transition[tranid].relvararray.end();++iter,++i) {
-        varvec[*iter] = vararray[i];
-    }
-}
+//void binding::compress() {
+//    if(cpn->transition[tranid].relvararray.size() == 0) {
+//        delete [] vararray;
+//        vararray = NULL;
+//        return;
+//    }
+//
+//    COLORID *condense = new COLORID [cpn->transition[tranid].relvararray.size()];
+//    vector<VARID>::const_iterator iter;
+//    int i;
+//    for(i=0,iter=cpn->transition[tranid].relvararray.begin();iter!=cpn->transition[tranid].relvararray.end();++iter,++i) {
+//        condense[i] = vararray[*iter];
+//    }
+//
+//    delete [] vararray;
+//    vararray = condense;
+//}
+//
+//void binding::decompress(COLORID *varvec) {
+//    vector<VARID>::const_iterator iter;
+//    int i;
+//    for(i=0,iter=cpn->transition[tranid].relvararray.begin();iter!=cpn->transition[tranid].relvararray.end();++iter,++i) {
+//        varvec[*iter] = vararray[i];
+//    }
+//}
 
 BindingList::BindingList() {
-    listhead = new binding(0);
+    listhead = NULL;
     strategy = byhead;
 }
 
@@ -116,6 +117,17 @@ BindingList::~BindingList() {
 void BindingList::insert(binding *p) {
     if(strategy == byorder) {
         /*strategy1:insert by order*/
+        if(listhead == NULL) {
+            listhead = p;
+            return;
+        }
+
+        if(*p > *listhead) {
+            p->next = listhead;
+            listhead = p;
+            return;
+        }
+
         binding *present,*predecessor;
         present = listhead->next;
         predecessor = listhead;
@@ -133,8 +145,8 @@ void BindingList::insert(binding *p) {
     }
     else if(strategy == byhead) {
         /*strategy2:insert by head*/
-        p->next = listhead->next;
-        listhead->next = p;
+        p->next = listhead;
+        listhead = p;
     }
 }
 
@@ -144,6 +156,17 @@ void BindingList::copy_insert(SHORTIDX tranid,const COLORID *vararry) {
 
     if(strategy == byorder) {
         /*strategy1:insert by order*/
+        if(listhead == NULL) {
+            listhead = p;
+            return;
+        }
+
+        if(*p > *listhead) {
+            p->next = listhead;
+            listhead = p;
+            return;
+        }
+
         binding *present,*predecessor;
         present = listhead->next;
         predecessor = listhead;
@@ -160,13 +183,20 @@ void BindingList::copy_insert(SHORTIDX tranid,const COLORID *vararry) {
         p->next = present;
     }
     else if(strategy == byhead) {
-        p->next = listhead->next;
-        listhead->next = p;
+        p->next = listhead;
+        listhead = p;
     }
 }
 
 binding *BindingList::Delete(binding *outelem) {
     binding *p,*q;
+    if(listhead == outelem) {
+        p = listhead;
+        listhead = listhead->next;
+        delete p;
+        return listhead;
+    }
+
     p=listhead->next;
     q=listhead;
     while (p) {
@@ -181,7 +211,7 @@ binding *BindingList::Delete(binding *outelem) {
 }
 
 bool BindingList::empty() {
-    if(listhead->next==NULL)
+    if(listhead == NULL)
         return true;
     else
         return false;
@@ -220,7 +250,7 @@ void CPN_RGNode::printMarking() {
         this->marking[i].printToken();
     }
     /*print fireable bindings*/
-    binding *p = enbindings.listhead->next;
+    binding *p = enbindings.listhead;
     while (p) {
         cout<<"{";
         cout<<cpn->transition[p->tranid].id<<",";
@@ -318,7 +348,7 @@ void CPN_RGNode::all_FireableBindings() {
             return;
     }
     Binding_Available = true;
-    compress();
+//    compress();
 }
 
 void CPN_RGNode::tran_FireableBindings(SHORTIDX tranid) {
@@ -345,7 +375,7 @@ void CPN_RGNode::tran_FireableBindings(SHORTIDX tranid) {
         }
     }
 
-    binding *q = bindingList[tran.producer.size()-1].listhead->next;
+    binding *q = bindingList[tran.producer.size()-1].listhead;
     while (q) {
         bool complete;
         vector<VARID> unassignedvar;
@@ -359,7 +389,7 @@ void CPN_RGNode::tran_FireableBindings(SHORTIDX tranid) {
         q=q->next;
     }
 
-    q = enbindings.listhead->next;
+    q = enbindings.listhead;
     bool guardtruth = true;
     while (q) {
         if(q->tranid != tranid) {
@@ -381,14 +411,16 @@ void CPN_RGNode::tran_FireableBindings(SHORTIDX tranid) {
     delete [] bindingList;
 }
 
-void CPN_RGNode::compress() {
-    binding *p = enbindings.listhead->next;
-    while (p) {
-        p->compress();
-        p=p->next;
-    }
-    MallocExtension::instance()->ReleaseFreeMemory();
-}
+//void CPN_RGNode::compress() {
+//    delete [] enbindings.listhead->vararray;
+//    enbindings.listhead->vararray = NULL;
+//    binding *p = enbindings.listhead->next;
+//    while (p) {
+//        p->compress();
+//        p=p->next;
+//    }
+//    MallocExtension::instance()->ReleaseFreeMemory();
+//}
 
 void CPN_RGNode::complete(const vector<VARID> unassignedvar,int level,binding *inbind) {
     if(level>=unassignedvar.size()) {
@@ -422,7 +454,7 @@ bool CPN_RGNode::isfirable(string transname) {
         while(!Binding_Available) {
             all_FireableBindings();
         }
-        binding *p = enbindings.listhead->next;
+        binding *p = enbindings.listhead;
         while (p) {
             if(p->tranid == finditer->second) {
                 fireable = true;
@@ -439,7 +471,27 @@ bool CPN_RGNode::isfirable(string transname) {
     }
 }
 
-CPN_RG::CPN_RG() {
+bool CPN_RGNode::isfirable(index_t argtranid) {
+    bool fireable = false;
+    while(!Binding_Available) {
+        all_FireableBindings();
+    }
+    binding *p = enbindings.listhead;
+    while (p) {
+        if(p->tranid == argtranid) {
+            fireable = true;
+            break;
+        }
+        p=p->next;
+    }
+    return fireable;
+}
+
+NUM_t CPN_RGNode::readPlace(index_t placeid) {
+    return marking[placeid].Tokensum();
+}
+
+CPN_RG::CPN_RG(atomictable &argAT) : AT(argAT) {
     initnode = NULL;
     markingtable = new CPN_RGNode*[CPNRGTABLE_SIZE];
     for(int i=0;i<CPNRGTABLE_SIZE;++i) {
@@ -535,7 +587,7 @@ void CPN_RG::Generate() {
 }
 
 void CPN_RG::Generate(CPN_RGNode *state) {
-    binding *p = state->enbindings.listhead->next;
+    binding *p = state->enbindings.listhead;
     bool exist = false;
     while (p) {
         CPN_RGNode *child = RGNode_Child(state,p,exist);
@@ -552,22 +604,22 @@ CPN_RGNode *CPN_RG::RGNode_Child(CPN_RGNode *curstate, binding *bind, bool &exis
 
     CPN_Transition &tran = cpn->transition[bind->tranid];
     vector<CSArc>::iterator front;
-    COLORID varvec[MAXVARNUM];
-    for(int i=0;i<MAXVARNUM;++i) {
-        varvec[i] = MAXCOLORID;
-    }
-    bind->decompress(varvec);
+//    COLORID varvec[MAXVARNUM];
+//    for(int i=0;i<MAXVARNUM;++i) {
+//        varvec[i] = MAXCOLORID;
+//    }
+//    bind->decompress(varvec);
 
     for(front=tran.producer.begin();front!=tran.producer.end();++front) {
         Multiset arcms;
-        front->arc_exp.to_Multiset(arcms,varvec);
+        front->arc_exp.to_Multiset(arcms,bind->vararray);
         MINUS(child->marking[front->idx],arcms);
     }
 
     vector<CSArc>::iterator rear;
     for(rear=tran.consumer.begin();rear!=tran.consumer.end();++rear) {
         Multiset arcms;
-        rear->arc_exp.to_Multiset(arcms,varvec);
+        rear->arc_exp.to_Multiset(arcms,bind->vararray);
         PLUS(child->marking[rear->idx],arcms);
     }
 

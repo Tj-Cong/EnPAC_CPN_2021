@@ -7,6 +7,7 @@
 
 #include "CPN.h"
 #include <iomanip>
+#include "BA/atomic.h"
 
 #define CPNRGTABLE_SIZE 1048576
 #define random(x) rand()%(x)
@@ -42,8 +43,8 @@ public:
      * @parm vid (out)
      * */
     bool completeness(vector<VARID> &unassignedvar) const;
-    void compress();
-    void decompress(COLORID *varvec);
+//    void compress();
+//    void decompress(COLORID *varvec);
     void printBinding(string &str);
     bool operator > (const binding &otherbind);
 };
@@ -77,9 +78,11 @@ public:
     void all_FireableBindings();
     void tran_FireableBindings(SHORTIDX tranid);
     void complete(const vector<VARID> unassignedvar,int level,binding *inbind);
-    void compress();
+//    void compress();
     void printMarking();
     bool isfirable(string transname);
+    bool isfirable(index_t tranid);
+    NUM_t readPlace(index_t placeid);
     bool operator == (const CPN_RGNode &state);
     void operator = (const CPN_RGNode &state);
 };
@@ -93,8 +96,9 @@ public:
     SHORTNUM *weight;
     NUM_t hash_conflict_times;
     NUM_t nodecount;
+    atomictable &AT;
 
-    CPN_RG();
+    CPN_RG(atomictable &argAT);
     ~CPN_RG();
     void addRGNode(CPN_RGNode *state);
     CPN_RGNode *CPNRGinitnode();

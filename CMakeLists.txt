@@ -11,6 +11,8 @@ link_libraries(tcmalloc)
 include_directories(.)
 
 add_executable(EnPAC_CPN
+        BA/atomic.h
+        BA/atomic.cpp
         BA/set.h
         BA/Syntax_Tree.h
         BA/Syntax_Tree.cpp
@@ -24,6 +26,15 @@ add_executable(EnPAC_CPN
         BA/tinyxml.h
         BA/tinyxmlerror.cpp
         BA/tinyxmlparser.cpp
-        main.cpp base.h expression.h expression.cpp sort.h sort.cpp CPN.h CPN.cpp CPN_RG.h CPN_RG.cpp CPN_Product.h CPN_Product.cpp)
+        main.cpp
+        base.h
+        expression.h
+        expression.cpp
+        sort.h sort.cpp
+        CPN.h CPN.cpp
+        CPN_RG.h
+        CPN_RG.cpp
+        CPN_Product.h
+        CPN_Product.cpp)
 
 target_link_libraries(EnPAC_CPN tcmalloc)

@@ -106,7 +106,10 @@ public:
     CPN_Product_Automata(StateBuchi *sba);
     ~CPN_Product_Automata();
     bool isLabel(CPN_RGNode *state,int sj);
+    bool newisLabel(CPN_RGNode *state,int sj);
     bool judgeF(string s);
+    bool checkLTLF(CPN_RGNode *state, atomicmeta &am);
+    bool checkLTLC(CPN_RGNode *state, atomicmeta &am);
     bool handleLTLF(string s, CPN_RGNode *state);
     bool handleLTLC(string s, CPN_RGNode *state);
     void handleLTLCstep(NUM_t &front_sum, NUM_t &latter_sum, string s, CPN_RGNode *state);

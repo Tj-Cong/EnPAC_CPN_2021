@@ -92,6 +92,7 @@ void Syntax_Tree::ParseXML(char *filename, string &property, int number) {
     property = this->propertyid = id->GetText();
     TiXmlElement *formula = p->FirstChildElement("formula");
     BuildTree(formula->FirstChildElement(),this->root);
+    delete doc;
 }
 
 void Syntax_Tree::BuildTree(TiXmlElement *xmlnode, STNode* &stnode) {
@@ -174,6 +175,8 @@ void Syntax_Tree::BuildTree(TiXmlElement *xmlnode, STNode* &stnode) {
         BuildTree(n->FirstChildElement(),stnode->nright);
     }
     else if(nodename == "is-fireable") {
+        AT.atomiccount++;                                                                       //AT
+        AT.atomics[AT.atomiccount].mytype = PT_FIREABILITY;                                     //AT
         stnode = new STNode(PREDICATE);
         stnode->formula += "{";
         TiXmlElement *m;
@@ -184,6 +187,14 @@ void Syntax_Tree::BuildTree(TiXmlElement *xmlnode, STNode* &stnode) {
             {
                 stnode->formula += m->GetText();
                 stnode->formula += ",";
+                //AT.atomics[AT.atomiccount].fires.insert(petri->getTPosition(m->GetText()));   //AT
+                index_t idx_T = cpn->getTPosition(m->GetText());                              //AT
+                if (idx_T == INDEX_ERROR){                                                      //AT
+                    cerr <<"Error in locate transition '"<<m->GetText()<<"'!"<<endl;            //AT
+                    exit(-1);                                                             //AT
+                }                                                                               //AT
+                else                                                                            //AT
+                    AT.atomics[AT.atomiccount].fires.push_back(idx_T);                             //AT
             }
             else
             {
@@ -193,8 +204,12 @@ void Syntax_Tree::BuildTree(TiXmlElement *xmlnode, STNode* &stnode) {
             m = m->NextSiblingElement();
         }
         stnode->formula += "}";
+        AT.atomics[AT.atomiccount].mystr = stnode->formula;                                     //AT
+        AT.checkRepeat();                                                                       //AT
     }
     else if(nodename == "integer-le") {
+        AT.atomiccount++;                                                                       //AT
+        AT.atomics[AT.atomiccount].mytype = PT_CARDINALITY;                                     //AT
         stnode = new STNode(PREDICATE);
         stnode->formula += "{";
         TiXmlElement *m, *n;
@@ -211,6 +226,7 @@ void Syntax_Tree::BuildTree(TiXmlElement *xmlnode, STNode* &stnode) {
             {
                 stnode->formula += left->GetText();
                 stnode->formula += ",";
+                AT.atomics[AT.atomiccount].addPlace2Exp(1,left->GetText());                 //AT
                 left = left->NextSiblingElement();
             }
             stnode->formula += ")";
@@ -218,6 +234,7 @@ void Syntax_Tree::BuildTree(TiXmlElement *xmlnode, STNode* &stnode) {
         else if (mValue == "integer-constant")
         {
             stnode->formula += m->GetText();
+            AT.atomics[AT.atomiccount].leftexp.constnum = atoi(m->GetText());                   //AT
         }
         else {
             cerr << "Error in XML file about the element integer-le!" << endl;
@@ -234,6 +251,7 @@ void Syntax_Tree::BuildTree(TiXmlElement *xmlnode, STNode* &stnode) {
             {
                 stnode->formula += right->GetText();
                 stnode->formula += ",";
+                AT.atomics[AT.atomiccount].addPlace2Exp(0,right->GetText());                //AT
                 right = right->NextSiblingElement();
             }
             stnode->formula += ")";
@@ -241,12 +259,15 @@ void Syntax_Tree::BuildTree(TiXmlElement *xmlnode, STNode* &stnode) {
         else if (nValue == "integer-constant")
         {
             stnode->formula += n->GetText();
+            AT.atomics[AT.atomiccount].rightexp.constnum = atoi(n->GetText());                  //AT
         }
         else {
             cerr << "Error in XML file about the element integer-le!" << endl;
             exit(-1);
         }
         stnode->formula += "}";
+        AT.atomics[AT.atomiccount].mystr = stnode->formula;                                     //AT
+        AT.checkRepeat();                                                                       //AT
     }
     else {
         cerr<<"Can not recognize operator:"<<nodename<<endl;
@@ -572,6 +593,34 @@ void Syntax_Tree::Rewrite(STNode *n, STNode *nparent, bool right) {
         }
         simplest = false;
     }
+    else if(n->ntyp==DISJUNC) {
+        bool merge = false;
+        if(n->nleft->ntyp==PREDICATE && n->nright->ntyp==PREDICATE) {
+            if(n->nleft->formula[0]=='!') {
+                string str = n->nleft->formula.substr(1);
+                if(str == n->nright->formula) {
+                    merge = true;
+                }
+            }
+            else if(n->nright->formula[0]=='!') {
+                string str = n->nright->formula.substr(1);
+                if(str == n->nleft->formula) {
+                    merge = true;
+                }
+            }
+        }
+        if(merge) {
+            n->formula = "true";
+            n->ntyp = PREDICATE;
+            Destroy(n->nleft);
+            Destroy(n->nright);
+            n->nleft = n->nright = NULL;
+        }
+        else {
+            Rewrite(n->nleft,n,0);
+            Rewrite(n->nright,n,1);
+        }
+    }
     else {
         if(n->nleft)
             Rewrite(n->nleft,n,0);
@@ -809,4 +858,55 @@ void Syntax_Tree::Transition_Simplify(STNode *n) {
 
 int Syntax_Tree::AssignUID() {
     return ++UID;
+}
+
+//AT
+void Syntax_Tree::PrintAT() {
+    cout << "atomiccount:" << AT.atomiccount << endl;
+    cout << "atomics:" <<endl;
+    for (int i=1;i<=AT.atomiccount;i++) {
+        cout << "atomics num:" << i << "  mytype:" << (AT.atomics[i].mytype==PT_CARDINALITY?"c_type":"f_type") << endl;
+        cout << "mystr:" << AT.atomics[i].mystr << endl;
+        if (AT.atomics[i].mytype==PT_CARDINALITY){//c_type, print left and right
+            //left
+            if (AT.atomics[i].leftexp.constnum != -1)
+                cout << "left: constnum = " << AT.atomics[i].leftexp.constnum << endl;
+            else{//print left expression
+                cout << "left: exp:";
+                cardmeta * meta = AT.atomics[i].leftexp.expression;
+                while (meta){
+                    cout <<meta->coefficient<<'*'<<cpn->place[meta->placeid].id<<',';
+                    meta = meta->next;
+                }
+                cout << endl;
+            }
+
+
+            //right
+            if (AT.atomics[i].rightexp.constnum != -1)
+                cout << "right: constnum = " << AT.atomics[i].rightexp.constnum << endl;
+            else{//print right expression
+                cout << "right: exp:";
+                cardmeta * meta = AT.atomics[i].rightexp.expression;
+                while (meta){
+                    cout << meta->coefficient<<'*'<<cpn->place[meta->placeid].id<<',';
+                    meta = meta->next;
+                }
+                cout << endl;
+            }
+        }
+        else{
+            //fireability
+            cout << "transition:";
+            vector<index_t>::iterator it;
+            it = AT.atomics[i].fires.begin();
+            while (it != AT.atomics[i].fires.end()){
+                cout << cpn->transition[*it].id <<',';
+                it++;
+            }
+            cout<<endl;
+        }
+        cout<<endl;
+    }
+
 }

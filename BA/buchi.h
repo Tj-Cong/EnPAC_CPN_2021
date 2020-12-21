@@ -1,13 +1,14 @@
 //
 // Created by hecong on 2020/8/5.
 //
-#ifndef ENPAC_2021_BUCHI_H
-#define ENPAC_2021_BUCHI_H
+
+#ifndef ENPAC_CPN_BUCHI_H
+#define ENPAC_CPN_BUCHI_H
 
 #include "Syntax_Tree.h"
 using namespace std;
 
-#define MAXSTATENUM 500
+#define MAXSTATENUM 1000
 #define MAXINT 0x7fffffff
 
 class Buchi;
@@ -131,7 +132,7 @@ bool EQUIVALENT(const BA_state &s1, const BA_state &s2);
 
 class Buchi
 {
-private:
+public:
     int vex_num;
     int state_num;
     int ustacksize;
@@ -167,6 +168,8 @@ typedef struct Vertex {
     bool accepted = false;         /*indicate if this state is an accepted state*/
     bool trueaccpted = false;      /*indicate if this state (accepeted) could infinitely appear in a sequence*/
     string label;                  /*conjunction of propositions*/
+    bool invalid = false;          /**/
+    vector<Atomic> links;          /**/
     double cost;                   /*the sum of heuristic information*/
     int mindistance = MAXINT;      /*minimum distance to a true accepted state*/
     int difficulty = 1;            /*the difficulty to satisfy this state's propositions*/
@@ -188,12 +191,13 @@ typedef struct Vertex {
 class StateBuchi
 {
 public:
-    bool simplest;
     int vex_num;
     int state_num;
     Vertex vertics[MAXSTATENUM];
+    bool simplest;
     CStack<int> tarjanstack;
     int *visited;
+    atomictable *pAT;
 public:
     StateBuchi(){vex_num=0;};
     void Build_SBA(const Buchi &ba);
@@ -204,12 +208,15 @@ public:
     void Complete2();
     void self_check();
     void PrintStateBuchi();
+    void linkAtomics(atomictable &AT);
 private:
     void Simplify_state();
     void Merge_state(int s1,int s2);
     void Redirect_transitions(int removeid, int redirectid);
     void Tarjan(int stateid);
     void Backward(int stateid);
+    static void parseLabel(vector<Atomic> &links, const string &label, const atomictable &AT);
+    static void judgeInvalid(bool &invalid, const vector<Atomic> &links);
 };
 
-#endif //ENPAC_2021_BUCHI_H
+#endif //ENPAC_CPN_BUCHI_H

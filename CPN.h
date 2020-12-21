@@ -7,9 +7,9 @@
 
 #include <fstream>
 #include "expression.h"
-
 using namespace std;
 
+#define INDEX_ERROR 0xffffffff
 extern int stringToNum(const string& str);
 
 /*========================Color_Petri_Net=======================*/
@@ -29,6 +29,7 @@ typedef struct CPN_Place
     vector<CSArc> consumer;
     hlinitialmarking *init_exp;    /*initial marking*/
     Multiset initM;             /*initial marking*/
+    vector<unsigned char> atomicLinks; //库所关联原子命题序列
 } CPlace;
 
 typedef struct CPN_Transition
@@ -91,6 +92,12 @@ public:
 
     /*get initial marking (translate hlinitialmarking into a multiset)*/
     void getInitMarking(CPlace &pp, TiXmlElement *xmlnode);
+
+    /*根据库所id得到他在库所表中的索引位置*/
+    index_t getPPosition(string str);
+
+    /*根据变迁id得到他在变迁表中的索引位置*/
+    index_t getTPosition(string str);
 
     /*print CPN by dot language*/
     void printCPN();

@@ -42,7 +42,7 @@ double get_time() {
 
 void CONSTRUCTCPN() {
     CPN *cpnet = new CPN;
-    char filename[] = "model.pnml";
+    char filename[] = "../CModels/model9.pnml";
     cpnet->getSize(filename);
     cpnet->printSort();
     cpnet->readPNML(filename);
@@ -53,7 +53,8 @@ void CONSTRUCTCPN() {
     timeflag = true;
     cpn = cpnet;
 //    CPN_RG *graph;
-//    graph = new CPN_RG;
+//    atomictable AT;
+//    graph = new CPN_RG(AT);
 //    graph->Generate();
 //    cout<<"STATE SPACE SIZE: "<<graph->nodecount<<endl;
 //    cpnRG = graph;
@@ -130,10 +131,11 @@ void CHECKLTL(bool cardinality) {
         SBA.Complete2();
         SBA.self_check();
 //        SBA.PrintStateBuchi();
+        SBA.linkAtomics(syntaxTree.AT);
 
         ready2exit = false;
         consistency = true;
-        crg = new CPN_RG;
+        crg = new CPN_RG(syntaxTree.AT);
         cpnRG = crg;
 
         starttime = get_time();
@@ -210,9 +212,10 @@ void CHECKLTL(bool cardinality,int num) {
     SBA.Complete2();
     SBA.self_check();
     SBA.PrintStateBuchi();
+    SBA.linkAtomics(syntaxTree.AT);
 
     ready2exit = false;
-    crg = new CPN_RG;
+    crg = new CPN_RG(syntaxTree.AT);
     cpnRG = crg;
 
     starttime = get_time();
@@ -229,11 +232,14 @@ void CHECKLTL(bool cardinality,int num) {
 
 int main() {
     CHECKMEM();
+    cout << "=================================================" << endl;
+    cout << "=====This is our tool-EnPAC for the MCC'2021=====" << endl;
+    cout << "=================================================" << endl;
 
     CONSTRUCTCPN();
     CHECKLTL(1);
     CHECKLTL(0);
-
+    delete cpn;
     return 0;
 }
 

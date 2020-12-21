@@ -2,8 +2,8 @@
 // Created by hecong on 2020/8/12.
 //
 
-#ifndef ENPAC_2021_SET_H
-#define ENPAC_2021_SET_H
+#ifndef ENPAC_CPN_SET_H
+#define ENPAC_CPN_SET_H
 //
 // Created by hecong on 2020/7/30.
 //
@@ -188,4 +188,4 @@ template <class T>
 void CQueue<T>::clear() {
     front = rear = 0;
 }
-#endif //ENPAC_2021_SET_H
+#endif //ENPAC_CPN_SET_H

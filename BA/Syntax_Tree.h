@@ -1,9 +1,8 @@
 //
 // Created by hecong on 2020/7/30.
 //
-#ifndef ENPAC_2021_SYNTAX_TREE_H
-#define ENPAC_2021_SYNTAX_TREE_H
-
+#ifndef ENPAC_CPN_SYNTAX_TREE_H
+#define ENPAC_CPN_SYNTAX_TREE_H
 
 #include <iostream>
 #include <fstream>
@@ -11,6 +10,7 @@
 #include <string>
 #include "tinyxml.h"
 #include "VWAA.h"
+#include "atomic.h"
 using namespace std;
 
 /*ROOT: root node of Syntax_Tree, non-sense
@@ -25,7 +25,6 @@ using namespace std;
  * V_OPER: "V/R";
  * */
 enum NodeType{ROOT,PREDICATE,NEG,CONJUNC,DISJUNC,NEXT,ALWAYS,EVENTUALLY,U_OPER,V_OPER};
-string DrawType(NodeType ntyp);
 
 
 /*The tree node structure of Syntax_Tree;
@@ -63,6 +62,9 @@ public:
     string propertyid;
     bool simplest;
     int UID;
+
+    //
+    atomictable AT;
 public:
     Syntax_Tree();
     ~Syntax_Tree();
@@ -108,5 +110,8 @@ public:
     void Transition_Simplify(STNode *n);
     void VWAA_Simplify();
     void VWAA_Simplify(STNode *n);
+
+    /*atomicstable operation*/
+    void PrintAT();
 };
-#endif //ENPAC_2021_SYNTAX_TREE_H
+#endif

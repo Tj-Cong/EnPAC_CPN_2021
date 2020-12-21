@@ -96,6 +96,12 @@
 		<Unit filename="/home/hecong/文档/EnPAC-CPN/BA/VWAA.h">
 			<Option target="EnPAC_CPN"/>
 		</Unit>
+		<Unit filename="/home/hecong/文档/EnPAC-CPN/BA/atomic.cpp">
+			<Option target="EnPAC_CPN"/>
+		</Unit>
+		<Unit filename="/home/hecong/文档/EnPAC-CPN/BA/atomic.h">
+			<Option target="EnPAC_CPN"/>
+		</Unit>
 		<Unit filename="/home/hecong/文档/EnPAC-CPN/BA/buchi.cpp">
 			<Option target="EnPAC_CPN"/>
 		</Unit>
