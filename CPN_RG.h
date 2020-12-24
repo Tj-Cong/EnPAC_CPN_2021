@@ -24,12 +24,11 @@ class binding
 {
 public:
     COLORID *vararray;
-    SHORTIDX tranid;
     binding *next;
 
     /*allocate memory and initiate to MAXCOLORID (0xffffffff)
      * */
-    binding(SHORTIDX tid);
+    binding();
 
     binding(const binding &b);
     /*free memory
@@ -42,7 +41,7 @@ public:
      * @parm tt (in)
      * @parm vid (out)
      * */
-    bool completeness(vector<VARID> &unassignedvar) const;
+    bool completeness(vector<VARID> &unassignedvar,SHORTIDX tranid) const;
 //    void compress();
 //    void decompress(COLORID *varvec);
     void printBinding(string &str);
@@ -53,12 +52,13 @@ class BindingList
 {
 public:
     binding *listhead;
+    SHORTIDX tranid;
     InsertStrategy strategy;
 
     BindingList();
     ~BindingList();
     void insert(binding *p);
-    void copy_insert(SHORTIDX tranid,const COLORID *vararry);
+    void copy_insert(const COLORID *vararry);
     binding *Delete(binding *outelem);
     bool empty();
 };
@@ -68,20 +68,21 @@ class CPN_RGNode
 public:
     Multiset *marking;
     CPN_RGNode *next;
-    BindingList enbindings;
+    BindingList *enbindings;
+    bool *Binding_Available;
     index_t markingid;
-    bool Binding_Available;
 public:
     CPN_RGNode();
     ~CPN_RGNode();
     index_t Hash(SHORTNUM *weight);
     void all_FireableBindings();
     void tran_FireableBindings(SHORTIDX tranid);
-    void complete(const vector<VARID> unassignedvar,int level,binding *inbind);
+    void complete(const vector<VARID> unassignedvar,int level,binding *inbind,SHORTIDX tranid);
 //    void compress();
     void printMarking();
     bool isfirable(string transname);
     bool isfirable(index_t tranid);
+    bool deadmark();
     NUM_t readPlace(index_t placeid);
     bool operator == (const CPN_RGNode &state);
     void operator = (const CPN_RGNode &state);
@@ -105,7 +106,7 @@ public:
     bool NodeExist(CPN_RGNode *state,CPN_RGNode *&existstate);
     void Generate();
     void Generate(CPN_RGNode *state);
-    CPN_RGNode *RGNode_Child(CPN_RGNode *curstate,binding *bind,bool &exist);
+    CPN_RGNode *RGNode_Child(CPN_RGNode *curstate,binding *bind,SHORTIDX tranid,bool &exist);
     friend class CPN_Product_Automata;
 };
 #endif //ENPAC_CPN_CPN_RG_H

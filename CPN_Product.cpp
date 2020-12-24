@@ -17,33 +17,69 @@ ProductState::ProductState() {
     BAname_id = -1;
     stacknext = UNREACHABLE;
     cur_RGchild = NULL;
-    fireBinding = NULL;
     pba = NULL;
-    virgin = true;
 }
 
 void ProductState::getNextRGChild(bool &exist) {
-    if(RGname_ptr->Binding_Available == false) {
-        RGname_ptr->all_FireableBindings();
-        if(ready2exit)
-            return;
-    }
-
-    if(virgin) {
-        fireBinding = RGname_ptr->enbindings.listhead;
-        cur_RGchild = fireBinding==NULL ? NULL:cpnRG->RGNode_Child(RGname_ptr,fireBinding,exist);
-        virgin = false;
-        return;
-    }
-
-    if(fireBinding == NULL) {
+    if(fireinfo.tranid >= cpn->transitioncount) {
         cur_RGchild = NULL;
         return;
     }
 
-    fireBinding = fireBinding->next;
-    cur_RGchild = fireBinding==NULL ? NULL:cpnRG->RGNode_Child(RGname_ptr,fireBinding,exist);
-    return;
+    while(fireinfo.virgin) {
+        if(!RGname_ptr->Binding_Available[fireinfo.tranid]) {
+            RGname_ptr->tran_FireableBindings(fireinfo.tranid);
+        }
+        fireinfo.fireBinding = RGname_ptr->enbindings[fireinfo.tranid].listhead;
+        if(fireinfo.fireBinding == NULL) {
+            if(NEXTTRANSITION() == FAIL)
+            {
+                cur_RGchild = NULL;
+                return;
+            }
+            else {
+                continue;
+            }
+        }
+        else {
+            fireinfo.virgin = false;
+            cur_RGchild = cpnRG->RGNode_Child(RGname_ptr,fireinfo.fireBinding,fireinfo.tranid,exist);
+            return;
+        }
+    }
+
+    if(NEXTBINDING() == FAIL) {
+        if(NEXTTRANSITION() == FAIL) {
+            cur_RGchild = NULL;
+            return;
+        }
+        else {
+            getNextRGChild(exist);
+        }
+    }
+    else {
+        cur_RGchild = cpnRG->RGNode_Child(RGname_ptr,fireinfo.fireBinding,fireinfo.tranid,exist);
+        return;
+    }
+}
+
+int ProductState::NEXTBINDING() {
+    if(fireinfo.fireBinding == NULL)
+        return FAIL;
+    fireinfo.fireBinding = fireinfo.fireBinding->next;
+    if(fireinfo.fireBinding == NULL)
+        return FAIL;
+    return SUCCESS;
+}
+
+int ProductState::NEXTTRANSITION() {
+    if(fireinfo.tranid>=cpn->transitioncount)
+        return FAIL;
+    fireinfo.tranid++;
+    fireinfo.virgin = true;
+    if(fireinfo.tranid>=cpn->transitioncount)
+        return FAIL;
+    return SUCCESS;
 }
 
 CHashtable::CHashtable() {
@@ -580,7 +616,7 @@ ProductState *CPN_Product_Automata::getNextChild(ProductState *curstate) {
         curstate->pba = ba->vertics[curstate->BAname_id].firstarc;
     }
 
-    if(curstate->RGname_ptr->enbindings.empty())
+    if(curstate->RGname_ptr->deadmark())
     {
         //表示当前状态没有可发生变迁，他的下一个状态仍然为自己
         CPN_RGNode *rgseed = curstate->RGname_ptr;

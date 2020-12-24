@@ -23,6 +23,12 @@ extern short int total_swap;
 extern bool consistency;
 extern pid_t mypid;
 
+typedef struct last_firing_info {
+    bool virgin = true;
+    SHORTIDX tranid = 0;
+    binding *fireBinding = NULL;
+} LFI;
+
 class ProductState
 {
 public:
@@ -31,11 +37,12 @@ public:
     int BAname_id;
     index_t stacknext;
     ArcNode *pba;
-    bool virgin;
-    binding *fireBinding;
+    LFI fireinfo;
     CPN_RGNode *cur_RGchild;
     ProductState();
     void getNextRGChild(bool &exist);
+    int NEXTTRANSITION();
+    int NEXTBINDING();
 };
 
 class S_ProductState

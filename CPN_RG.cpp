@@ -7,7 +7,7 @@
 * whether all related variables of @parm tt have been assigned a value;
 * if not, return the first unassigned variable's vid from @parm vid
 * */
-bool binding::completeness(vector<VARID> &unassignedvar) const {
+bool binding::completeness(vector<VARID> &unassignedvar,SHORTIDX tranid) const {
     bool complete = true;
     const CPN_Transition &tt = cpn->transition[tranid];
     vector<VARID>::const_iterator iter;
@@ -22,9 +22,7 @@ bool binding::completeness(vector<VARID> &unassignedvar) const {
 
 void binding::printBinding(string &str) {
     str = "<";
-    if(cpn->transition[tranid].relvararray.size()==0)
-        return;
-    for(int i=0;i<cpn->transition[tranid].relvararray.size()-1;++i) {
+    for(int i=0;i<cpn->varcount-1;++i) {
         if(vararray[i]!=MAXCOLORID) {
             str += VarTable::vartable[i].id + "=" + to_string(vararray[i])+",";
         }
@@ -32,7 +30,7 @@ void binding::printBinding(string &str) {
             str += VarTable::vartable[i].id + "=" + "-,";
         }
     }
-    if(vararray[cpn->transition[tranid].relvararray.size()-1]!=MAXCOLORID) {
+    if(vararray[cpn->varcount-1]!=MAXCOLORID) {
         str += VarTable::vartable[cpn->varcount-1].id + "=" +to_string(vararray[cpn->varcount-1]);
     }
     else {
@@ -42,18 +40,12 @@ void binding::printBinding(string &str) {
 }
 
 bool binding::operator>(const binding &otherbind) {
-    if(this->tranid > otherbind.tranid)
-        return true;
-    else if(this->tranid < otherbind.tranid)
-        return false;
-
     /*this->tranid = otherbind.tranid*/
     /*compare the vararry*/
     return array_greater(this->vararray,otherbind.vararray,cpn->varcount);
 }
 
-binding::binding(SHORTIDX tid) {
-    tranid = tid;
+binding::binding() {
     next = NULL;
     vararray = new COLORID [cpn->varcount];
     for(int i=0;i<cpn->varcount;++i) {
@@ -63,7 +55,6 @@ binding::binding(SHORTIDX tid) {
 }
 
 binding::binding(const binding &b) {
-    tranid = b.tranid;
     next = NULL;
     vararray = new COLORID [cpn->varcount];
     memcpy(this->vararray,b.vararray,sizeof(COLORID)*(cpn->varcount));
@@ -150,8 +141,8 @@ void BindingList::insert(binding *p) {
     }
 }
 
-void BindingList::copy_insert(SHORTIDX tranid,const COLORID *vararry) {
-    binding *p = new binding(tranid);
+void BindingList::copy_insert(const COLORID *vararry) {
+    binding *p = new binding;
     memcpy(p->vararray,vararry,sizeof(COLORID)*cpn->varcount);
 
     if(strategy == byorder) {
@@ -224,12 +215,20 @@ CPN_RGNode::CPN_RGNode() {
         marking[i].initiate(cpn->place[i].tid,cpn->place[i].sid);
     }
     next = NULL;
-    Binding_Available = false;
+    Binding_Available = new bool [cpn->transitioncount];
+    enbindings = new BindingList[cpn->transitioncount];
+    for(SHORTIDX i=0;i<cpn->transitioncount;++i) {
+        Binding_Available[i] = false;
+        enbindings[i].tranid = i;
+    }
+
 }
 
 CPN_RGNode::~CPN_RGNode() {
     delete [] marking;
-//    MallocExtension::instance()->ReleaseFreeMemory();
+    delete [] enbindings;
+    delete [] Binding_Available;
+    MallocExtension::instance()->ReleaseFreeMemory();
 }
 
 index_t CPN_RGNode::Hash(SHORTNUM *weight) {
@@ -250,14 +249,16 @@ void CPN_RGNode::printMarking() {
         this->marking[i].printToken();
     }
     /*print fireable bindings*/
-    binding *p = enbindings.listhead;
-    while (p) {
-        cout<<"{";
-        cout<<cpn->transition[p->tranid].id<<",";
-        string bind;
-        p->printBinding(bind);
-        cout<<bind<<"}"<<endl;
-        p=p->next;
+    for(int i=cpn->transitioncount-1;i>=0;--i) {
+        binding *p = enbindings[i].listhead;
+        while (p) {
+            cout<<"{";
+            cout<<cpn->transition[i].id<<",";
+            string bind;
+            p->printBinding(bind);
+            cout<<bind<<"}"<<endl;
+            p=p->next;
+        }
     }
     cout<<"----------------------------------------"<<endl;
 }
@@ -339,24 +340,28 @@ void CPN_RGNode::operator=(const CPN_RGNode &state) {
 }
 
 void CPN_RGNode::all_FireableBindings() {
-    if(Binding_Available == true)
-        return;
-
     for(SHORTIDX i=0;i<cpn->transitioncount;++i) {
+        if(Binding_Available[i] == true)
+            continue;
         tran_FireableBindings(i);
         if(ready2exit)
             return;
     }
-    Binding_Available = true;
 //    compress();
 }
 
 void CPN_RGNode::tran_FireableBindings(SHORTIDX tranid) {
+    if(Binding_Available[tranid])
+        return;
+
+    /*Notice: when in the parallel environment, this clause is dangerous*/
+    Binding_Available[tranid] = true;
+
     CPN_Transition &tran = cpn->transition[tranid];
     BindingList *bindingList = new BindingList[tran.producer.size()];
 
     BindingList initlist;
-    binding *p = new binding(tranid);
+    binding *p = new binding;
     initlist.insert(p);
 
     if(tran.producer[0].arc_exp.get_IBS(marking[tran.producer[0].idx],initlist,bindingList[0])!=SUCCESS) {
@@ -379,30 +384,26 @@ void CPN_RGNode::tran_FireableBindings(SHORTIDX tranid) {
     while (q) {
         bool complete;
         vector<VARID> unassignedvar;
-        complete = q->completeness(unassignedvar);
+        complete = q->completeness(unassignedvar,tranid);
         if(complete) {
-            enbindings.copy_insert(tranid,q->vararray);
+            enbindings[tranid].copy_insert(q->vararray);
         }
         else {
-            this->complete(unassignedvar,0,q);
+            this->complete(unassignedvar,0,q,tranid);
         }
         q=q->next;
     }
 
-    q = enbindings.listhead;
+    q = enbindings[tranid].listhead;
     bool guardtruth = true;
     while (q) {
-        if(q->tranid != tranid) {
-            q=q->next;
-            continue;
-        }
         //judge guard
         if(tran.hasguard) {
             guardtruth=tran.guard.judgeGuard(q->vararray);
         }
 
         if(!guardtruth) {
-            q = enbindings.Delete(q);
+            q = enbindings[tranid].Delete(q);
         }
         else {
             q=q->next;
@@ -422,9 +423,9 @@ void CPN_RGNode::tran_FireableBindings(SHORTIDX tranid) {
 //    MallocExtension::instance()->ReleaseFreeMemory();
 //}
 
-void CPN_RGNode::complete(const vector<VARID> unassignedvar,int level,binding *inbind) {
+void CPN_RGNode::complete(const vector<VARID> unassignedvar,int level,binding *inbind,SHORTIDX tranid) {
     if(level>=unassignedvar.size()) {
-        enbindings.copy_insert(inbind->tranid,inbind->vararray);
+        enbindings[tranid].copy_insert(inbind->vararray);
         return;
     }
 
@@ -433,7 +434,7 @@ void CPN_RGNode::complete(const vector<VARID> unassignedvar,int level,binding *i
         SHORTNUM feconstnum = SortTable::usersort[curvar.sid].feconstnum;
         for(int i=0;i<feconstnum;++i) {
             inbind->vararray[curvar.vid] = i;
-            complete(unassignedvar,level+1,inbind);
+            complete(unassignedvar,level+1,inbind,tranid);
         }
     }
     else if(curvar.tid == finiteintrange) {
@@ -441,28 +442,19 @@ void CPN_RGNode::complete(const vector<VARID> unassignedvar,int level,binding *i
         int end = SortTable::finitintrange[curvar.sid].end;
         for(int i=start;i<=end;++i) {
             inbind->vararray[curvar.vid] = i;
-            complete(unassignedvar,level+1,inbind);
+            complete(unassignedvar,level+1,inbind,tranid);
         }
     }
 }
 
 bool CPN_RGNode::isfirable(string transname) {
-    bool fireable = false;
     map<string,index_t>::iterator finditer;
     finditer = cpn->mapTransition.find(transname);
     if(finditer!=cpn->mapTransition.end()) {
-        while(!Binding_Available) {
-            all_FireableBindings();
+        while(!Binding_Available[finditer->second]) {
+            tran_FireableBindings(finditer->second);
         }
-        binding *p = enbindings.listhead;
-        while (p) {
-            if(p->tranid == finditer->second) {
-                fireable = true;
-                break;
-            }
-            p=p->next;
-        }
-        return fireable;
+        return !enbindings[finditer->second].empty();
     }
     else {
         consistency = false;
@@ -472,19 +464,18 @@ bool CPN_RGNode::isfirable(string transname) {
 }
 
 bool CPN_RGNode::isfirable(index_t argtranid) {
-    bool fireable = false;
-    while(!Binding_Available) {
-        all_FireableBindings();
+    while(!Binding_Available[argtranid]) {
+        tran_FireableBindings(argtranid);
     }
-    binding *p = enbindings.listhead;
-    while (p) {
-        if(p->tranid == argtranid) {
-            fireable = true;
-            break;
-        }
-        p=p->next;
+    return !enbindings[argtranid].empty();
+}
+
+bool CPN_RGNode::deadmark() {
+    for(int i=0;i<cpn->transitioncount;++i) {
+        if(!enbindings[i].empty())
+            return false;
     }
-    return fireable;
+    return true;
 }
 
 NUM_t CPN_RGNode::readPlace(index_t placeid) {
@@ -587,22 +578,24 @@ void CPN_RG::Generate() {
 }
 
 void CPN_RG::Generate(CPN_RGNode *state) {
-    binding *p = state->enbindings.listhead;
-    bool exist = false;
-    while (p) {
-        CPN_RGNode *child = RGNode_Child(state,p,exist);
-        if(!exist) {
-            Generate(child);
+    for(int i=cpn->transitioncount-1;i>=0;--i) {
+        binding *p = state->enbindings[i].listhead;
+        bool exist = false;
+        while (p) {
+            CPN_RGNode *child = RGNode_Child(state,p,i,exist);
+            if(!exist) {
+                Generate(child);
+            }
+            p=p->next;
         }
-        p=p->next;
     }
 }
 
-CPN_RGNode *CPN_RG::RGNode_Child(CPN_RGNode *curstate, binding *bind, bool &exist) {
+CPN_RGNode *CPN_RG::RGNode_Child(CPN_RGNode *curstate, binding *bind, SHORTIDX tranid, bool &exist) {
     CPN_RGNode *child = new CPN_RGNode;
     *child = *curstate;
 
-    CPN_Transition &tran = cpn->transition[bind->tranid];
+    CPN_Transition &tran = cpn->transition[tranid];
     vector<CSArc>::iterator front;
 //    COLORID varvec[MAXVARNUM];
 //    for(int i=0;i<MAXVARNUM;++i) {

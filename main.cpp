@@ -42,7 +42,7 @@ double get_time() {
 
 void CONSTRUCTCPN() {
     CPN *cpnet = new CPN;
-    char filename[] = "../CModels/model9.pnml";
+    char filename[] = "model.pnml";
     cpnet->getSize(filename);
     cpnet->printSort();
     cpnet->readPNML(filename);
@@ -162,60 +162,62 @@ void CHECKLTL(bool cardinality,int num) {
     SHORTNUM each_run_time = 3000;
 
     string propertyid;
-    char ff[]="LTLFireability.xml";
-    char cc[]="LTLCardinality.xml";
-    Syntax_Tree syntaxTree;
-    if(cardinality)
-        syntaxTree.ParseXML(cc,propertyid,num);
-    else
-        syntaxTree.ParseXML(ff,propertyid,num);
-    cout<<"original tree:"<<endl;
-    syntaxTree.PrintTree();
-    cout<<"-----------------------------------"<<endl;
-    syntaxTree.Push_Negation(syntaxTree.root);
-    cout<<"after negation:"<<endl;
-    syntaxTree.PrintTree();
-    cout<<"-----------------------------------"<<endl;
-    syntaxTree.SimplifyLTL();
-    cout<<"after simplification:"<<endl;
-    syntaxTree.PrintTree();
-    cout<<"-----------------------------------"<<endl;
-    syntaxTree.Universe(syntaxTree.root);
-    cout<<"after universe"<<endl;
-    syntaxTree.PrintTree();
-    cout<<"-----------------------------------"<<endl;
-
-    syntaxTree.Get_DNF(syntaxTree.root);
-    syntaxTree.Build_VWAA();
-    syntaxTree.VWAA_Simplify();
-
-    General GBA;
-    GBA.Build_GBA(syntaxTree);
-    GBA.Simplify();
-    GBA.self_check();
-
-    Buchi BA;
-    BA.Build_BA(GBA);
-    BA.Simplify();
-    BA.self_check();
-    BA.Backward_chaining();
-    BA.PrintBuchi("BA.dot");
+//    char ff[]="LTLFireability.xml";
+//    char cc[]="LTLCardinality.xml";
+//    Syntax_Tree syntaxTree;
+//    if(cardinality)
+//        syntaxTree.ParseXML(cc,propertyid,num);
+//    else
+//        syntaxTree.ParseXML(ff,propertyid,num);
+//    cout<<"original tree:"<<endl;
+//    syntaxTree.PrintTree();
+//    cout<<"-----------------------------------"<<endl;
+//    syntaxTree.Push_Negation(syntaxTree.root);
+//    cout<<"after negation:"<<endl;
+//    syntaxTree.PrintTree();
+//    cout<<"-----------------------------------"<<endl;
+//    syntaxTree.SimplifyLTL();
+//    cout<<"after simplification:"<<endl;
+//    syntaxTree.PrintTree();
+//    cout<<"-----------------------------------"<<endl;
+//    syntaxTree.Universe(syntaxTree.root);
+//    cout<<"after universe"<<endl;
+//    syntaxTree.PrintTree();
+//    cout<<"-----------------------------------"<<endl;
+//
+//    syntaxTree.Get_DNF(syntaxTree.root);
+//    syntaxTree.Build_VWAA();
+//    syntaxTree.VWAA_Simplify();
+//
+//    General GBA;
+//    GBA.Build_GBA(syntaxTree);
+//    GBA.Simplify();
+//    GBA.self_check();
+//
+//    Buchi BA;
+//    BA.Build_BA(GBA);
+//    BA.Simplify();
+//    BA.self_check();
+//    BA.Backward_chaining();
+//    BA.PrintBuchi("BA.dot");
 
     StateBuchi SBA;
-//    CreateBA(SBA);
-    SBA.Build_SBA(BA);
-    SBA.PrintStateBuchi();
-    SBA.Simplify();
-    SBA.Tarjan();
-    SBA.Complete1();
-    SBA.Add_heuristic();
-    SBA.Complete2();
-    SBA.self_check();
-    SBA.PrintStateBuchi();
-    SBA.linkAtomics(syntaxTree.AT);
+    CreateBA(SBA);
+//    SBA.Build_SBA(BA);
+//    SBA.PrintStateBuchi();
+//    SBA.Simplify();
+//    SBA.Tarjan();
+//    SBA.Complete1();
+//    SBA.Add_heuristic();
+//    SBA.Complete2();
+//    SBA.self_check();
+//    SBA.PrintStateBuchi();
+//    SBA.linkAtomics(syntaxTree.AT);
+
 
     ready2exit = false;
-    crg = new CPN_RG(syntaxTree.AT);
+    atomictable AT;
+    crg = new CPN_RG(AT);
     cpnRG = crg;
 
     starttime = get_time();

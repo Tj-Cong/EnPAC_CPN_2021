@@ -696,7 +696,7 @@ void hlinscription::to_Multiset(arcnode *node,Multiset &ms,const COLORID *Bindin
             int psnum = SortTable::productsort[placesid].sortnum;
             BindingList bindingList;
             bindingList.strategy = byhead;
-            binding *initbind = new binding(tranid);
+            binding *initbind = new binding;
             bindingList.insert(initbind);
 
             getTupleColor(node,bindingList,Binding);
@@ -1096,7 +1096,7 @@ void hlinscription::arcmeta_multiset_match(int arcmetanum,BindingList &IBS,const
             return;
 
         if(marking>=tempms) {
-            IBS.copy_insert(tranid,vararray);
+            IBS.copy_insert(vararray);
         }
         return;
     }
@@ -1405,7 +1405,7 @@ void hlinscription::color_space_exploration(int relvarpt, COLORID *vararray, con
             return;
 
         if(marking >= arcms) {
-            IBS.copy_insert(tranid,vararray);
+            IBS.copy_insert(vararray);
         }
         return;
     }
