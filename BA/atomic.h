@@ -56,7 +56,6 @@ public:
 
     void addPlace2Exp(bool left, const string &placeName);
 
-
     int parse();
     int parse_card();
     int parse_fire();

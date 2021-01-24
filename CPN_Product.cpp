@@ -30,6 +30,8 @@ void ProductState::getNextRGChild(bool &exist) {
         if(!RGname_ptr->Binding_Available[fireinfo.tranid]) {
             RGname_ptr->tran_FireableBindings(fireinfo.tranid);
         }
+        if(ready2exit)
+            return;
         fireinfo.fireBinding = RGname_ptr->enbindings[fireinfo.tranid].listhead;
         if(fireinfo.fireBinding == NULL) {
             if(NEXTTRANSITION() == FAIL)
@@ -776,6 +778,7 @@ void CPN_Product_Automata::getProduct() {
     {
         ProductState *init = new ProductState;
         init->RGname_ptr = initial_status[i].RGname_ptr;
+//        init->RGname_ptr->printMarking();
         init->BAname_id = initial_status[i].BAname_id;
         init->pba = ba->vertics[init->BAname_id].firstarc;
         init->id = 0;

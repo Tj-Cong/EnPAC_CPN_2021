@@ -16,6 +16,7 @@
 extern CPN *cpn;
 extern bool consistency;
 extern bool ready2exit;
+extern bool timeflag;
 class CPN_Product_Automata;
 
 enum InsertStrategy{byorder,byhead};
@@ -52,7 +53,7 @@ class BindingList
 {
 public:
     binding *listhead;
-    SHORTIDX tranid;
+    NUM_t count;
     InsertStrategy strategy;
 
     BindingList();

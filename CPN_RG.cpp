@@ -94,6 +94,7 @@ binding::~binding() {
 BindingList::BindingList() {
     listhead = NULL;
     strategy = byhead;
+    count = 0;
 }
 
 BindingList::~BindingList() {
@@ -106,6 +107,7 @@ BindingList::~BindingList() {
 }
 
 void BindingList::insert(binding *p) {
+    count++;
     if(strategy == byorder) {
         /*strategy1:insert by order*/
         if(listhead == NULL) {
@@ -144,7 +146,7 @@ void BindingList::insert(binding *p) {
 void BindingList::copy_insert(const COLORID *vararry) {
     binding *p = new binding;
     memcpy(p->vararray,vararry,sizeof(COLORID)*cpn->varcount);
-
+    count++;
     if(strategy == byorder) {
         /*strategy1:insert by order*/
         if(listhead == NULL) {
@@ -180,6 +182,7 @@ void BindingList::copy_insert(const COLORID *vararry) {
 }
 
 binding *BindingList::Delete(binding *outelem) {
+    count--;
     binding *p,*q;
     if(listhead == outelem) {
         p = listhead;
@@ -219,7 +222,6 @@ CPN_RGNode::CPN_RGNode() {
     enbindings = new BindingList[cpn->transitioncount];
     for(SHORTIDX i=0;i<cpn->transitioncount;++i) {
         Binding_Available[i] = false;
-        enbindings[i].tranid = i;
     }
 
 }
@@ -380,6 +382,7 @@ void CPN_RGNode::tran_FireableBindings(SHORTIDX tranid) {
         }
     }
 
+    BindingList &bb = bindingList[tran.producer.size()-1];
     binding *q = bindingList[tran.producer.size()-1].listhead;
     while (q) {
         bool complete;
@@ -395,20 +398,40 @@ void CPN_RGNode::tran_FireableBindings(SHORTIDX tranid) {
     }
 
     q = enbindings[tranid].listhead;
+    binding *qq = q;
+    bool first = true;
     bool guardtruth = true;
-    while (q) {
+
+    while (q && timeflag) {
         //judge guard
         if(tran.hasguard) {
             guardtruth=tran.guard.judgeGuard(q->vararray);
         }
 
         if(!guardtruth) {
-            q = enbindings[tranid].Delete(q);
+            if(first) {
+                enbindings[tranid].listhead = enbindings[tranid].listhead->next;
+                delete q;
+                q = enbindings[tranid].listhead;
+                qq = enbindings[tranid].listhead;
+            }
+            else {
+                qq->next = q->next;
+                delete q;
+                q = qq->next;
+            }
         }
         else {
-            q=q->next;
+            if(!first)
+                qq = q;
+            else
+                qq = enbindings[tranid].listhead;
+            q = q->next;
+            first = false;
         }
     }
+    if (!timeflag)
+        ready2exit = true;
     delete [] bindingList;
 }
 
