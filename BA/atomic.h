@@ -2,14 +2,14 @@
 // Created by hecong on 2020/9/28.
 //
 
-#ifndef ENPAC_CPN_ATOMIC_H
-#define ENPAC_CPN_ATOMIC_H
+#ifndef ENPAC_2021_ATOMIC_H
+#define ENPAC_2021_ATOMIC_H
 
 #include <iostream>
 #include <string>
 #include <set>
-#include <vector>
 #include "CPN.h"
+
 using namespace std;
 
 #define OK 1
@@ -18,7 +18,8 @@ using namespace std;
 
 extern CPN *cpn;
 
-enum AtomicType{TRUE,PT_CARDINALITY,PT_FIREABILITY};
+enum AtomicType{PT_CARDINALITY,PT_FIREABILITY};
+enum Evaluation{UNKNOW,TRUE,FALSE};
 
 typedef struct cardmeta {
     short coefficient = 1;
@@ -35,6 +36,7 @@ public:
     ~cardexp();
     void DestroyExp();
     cardmeta *locate(unsigned int placeid);
+    int placenum();
     void insert(cardmeta *meta);
     void MINUS (const cardexp &exp2);
 };
@@ -47,15 +49,17 @@ public:
     cardexp leftexp;
     cardexp rightexp;
     vector<unsigned int> fires;
+    Evaluation groundtruth;
 
     bool last_check;
     bool last_check_avaliable;
 
 public:
-    atomicmeta(){last_check_avaliable= false;}
+    atomicmeta(){last_check_avaliable=false;groundtruth=UNKNOW;}
 
-    void addPlace2Exp(bool left, const string &placeName);
+    int addPlace2Exp(bool left, const string &placeName);
 
+    void evaluate();
     int parse();
     int parse_card();
     int parse_fire();
@@ -78,4 +82,4 @@ public:
     void checkRepeat();//check the latest one. If repeated, delete and release memory.
     void linkPlace2atomictable();    //构建库所影响的原子命题序列
 };
-#endif //ENPAC_CPN_ATOMIC_H
+#endif //ENPAC_2021_ATOMIC_H

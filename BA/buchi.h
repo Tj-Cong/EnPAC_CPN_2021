@@ -1,10 +1,6 @@
 //
 // Created by hecong on 2020/8/5.
 //
-
-#ifndef ENPAC_CPN_BUCHI_H
-#define ENPAC_CPN_BUCHI_H
-
 #include "Syntax_Tree.h"
 using namespace std;
 
@@ -186,6 +182,14 @@ typedef struct Vertex {
     void CalDifficulty();
     void DelArc(ArcNode *p);
     void AddArc(int target);
+
+    bool operator > (const Vertex &vex) const {
+        return this->cost > vex.cost;
+    }
+    bool operator < (const Vertex &vex) const {
+        return this->cost < vex.cost;
+    }
+
 } Vextex;
 
 class StateBuchi
@@ -218,5 +222,3 @@ private:
     static void parseLabel(vector<Atomic> &links, const string &label, const atomictable &AT);
     static void judgeInvalid(bool &invalid, const vector<Atomic> &links);
 };
-
-#endif //ENPAC_CPN_BUCHI_H

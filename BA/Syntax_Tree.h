@@ -1,9 +1,6 @@
 //
 // Created by hecong on 2020/7/30.
 //
-#ifndef ENPAC_CPN_SYNTAX_TREE_H
-#define ENPAC_CPN_SYNTAX_TREE_H
-
 #include <iostream>
 #include <fstream>
 #include <iomanip>
@@ -36,6 +33,7 @@ typedef struct STNode
     int Uid;
     bool pure_even;     //whether the subformula is pure eventual, regarding the node as a root
     bool pure_univ;     //whether the subformula is pure universal, regarding the node as a root
+    Evaluation groundtruth;
     string formula;     //the string of the subformula, regarding the node as a root
     vector<set<const STNode *>> DNF;
     vector<VWAA_delta> transitions;    //the transition set of this node, regarding it as a VWAA state
@@ -43,12 +41,14 @@ typedef struct STNode
     STNode *nright;     //rightnode
 
     STNode() {
+        groundtruth = UNKNOW;
         Uid = 0;
         pure_even = pure_univ = false;
         nleft = nright = NULL;
     }
     STNode(NodeType type) {
         ntyp = type;
+        groundtruth = UNKNOW;
         Uid = 0;
         pure_even = pure_univ = false;
         nleft = nright = NULL;
@@ -72,13 +72,13 @@ public:
      * filename: filename of XML file;
      * number: spefies which formula to parse, number~[1,16];
      * */
-    void ParseXML(char *filename, string &property, int number=1);
+    int ParseXML(char *filename, string &property, int number=1);
 
     /*Build a syntax tree from a XML structure; (recursive function)
      * xmlnode: xml node;
      * stnode: syntax tree node;
      * */
-    void BuildTree(TiXmlElement *xmlnode, STNode* &stnode);
+    void BuildTree(TiXmlElement *xmlnode, STNode* &stnode,bool &consistency);
 
     /*Tree operator*/
     void Destroy(STNode *n);
@@ -102,6 +102,10 @@ public:
     /*Replace "G","F" with V_OPER and U_OPER. (recursive fucntion)*/
     void Universe(STNode *n);
 
+    void Evaluate(STNode *n);
+
+    void Prune(STNode *curnode, STNode *predecessor);
+
     /*VWAA operation*/
     int AssignUID();
     void Get_DNF(STNode *n);
@@ -114,4 +118,3 @@ public:
     /*atomicstable operation*/
     void PrintAT();
 };
-#endif

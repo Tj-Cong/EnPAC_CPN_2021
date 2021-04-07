@@ -44,16 +44,16 @@ void CONSTRUCTCPN() {
     CPN *cpnet = new CPN;
     char filename[] = "model.pnml";
     cpnet->getSize(filename);
-    cpnet->printSort();
+//    cpnet->printSort();
     cpnet->readPNML(filename);
-    cpnet->printTransVar();
-    cpnet->printVar();
+//    cpnet->printTransVar();
+//    cpnet->printVar();
 
-    cpnet->printCPN();
+//    cpnet->printCPN();
     timeflag = true;
     cpn = cpnet;
-//    CPN_RG *graph;
-//    atomictable AT;
+    CPN_RG *graph;
+    atomictable AT;
 //    graph = new CPN_RG(AT);
 //    graph->Generate();
 //    cout<<"STATE SPACE SIZE: "<<graph->nodecount<<endl;
@@ -86,10 +86,27 @@ void CHECKLTL(bool cardinality) {
         }
         Syntax_Tree syntaxTree;
 
-        if(cardinality)
-            syntaxTree.ParseXML(cc,propertyid,i);
-        else
-            syntaxTree.ParseXML(ff,propertyid,i);
+        if(cardinality) {
+            if(syntaxTree.ParseXML(cc,propertyid,i)==CONSISTENCY_ERROR) {
+                cout << "FORMULA " << propertyid << " CANNOT_COMPUTE CONSISTENCY_ERROR"<<endl;
+                outresult << '?';
+                continue;
+            }
+        }
+        else {
+            if(syntaxTree.ParseXML(ff,propertyid,i)==CONSISTENCY_ERROR) {
+                cout << "FORMULA " << propertyid << " CANNOT_COMPUTE CONSISTENCY_ERROR"<<endl;
+                outresult << '?';
+                continue;
+            }
+
+        }
+
+        if(syntaxTree.root->groundtruth!=UNKNOW) {
+            cout << "FORMULA " << propertyid << " " << ((syntaxTree.root->groundtruth==TRUE)?"TRUE":"FALSE")<<endl;
+            outresult << ((syntaxTree.root->groundtruth==TRUE)?'T':'F');
+            continue;
+        }
 //        cout<<"original tree:"<<endl;
 //        syntaxTree.PrintTree();
 //        cout<<"-----------------------------------"<<endl;
@@ -155,6 +172,7 @@ void CHECKLTL(bool cardinality) {
     }
     outresult<<endl;
 }
+
 void CHECKLTL(bool cardinality,int num) {
     double starttime, endtime;
     CPN_RG *crg;
@@ -165,10 +183,18 @@ void CHECKLTL(bool cardinality,int num) {
 //    char ff[]="LTLFireability.xml";
 //    char cc[]="LTLCardinality.xml";
 //    Syntax_Tree syntaxTree;
-//    if(cardinality)
-//        syntaxTree.ParseXML(cc,propertyid,num);
-//    else
-//        syntaxTree.ParseXML(ff,propertyid,num);
+//    if(cardinality) {
+//        if(syntaxTree.ParseXML(cc,propertyid,num)==CONSISTENCY_ERROR) {
+//            cout << "FORMULA " << propertyid << " CANNOT_COMPUTE CONSISTENCY_ERROR"<<endl;
+//            return;
+//        }
+//    }
+//    else {
+//        if(syntaxTree.ParseXML(ff,propertyid,num)==CONSISTENCY_ERROR) {
+//            cout << "FORMULA " << propertyid << " CANNOT_COMPUTE CONSISTENCY_ERROR"<<endl;
+//            return;
+//        }
+//    }
 //    cout<<"original tree:"<<endl;
 //    syntaxTree.PrintTree();
 //    cout<<"-----------------------------------"<<endl;
@@ -232,6 +258,24 @@ void CHECKLTL(bool cardinality,int num) {
     delete crg;
 }
 
+int main0(int argc, char* argv[]) {
+    CHECKMEM();
+    cout << "=================================================" << endl;
+    cout << "=====This is our tool-EnPAC for the MCC'2021=====" << endl;
+    cout << "=================================================" << endl;
+
+    CONSTRUCTCPN();
+    string category = argv[1];
+    if(category=="LTLCardinality") {
+        CHECKLTL(1);
+    }
+    else {
+        CHECKLTL(0);
+    }
+    delete cpn;
+    return 0;
+}
+
 int main() {
     CHECKMEM();
     cout << "=================================================" << endl;
@@ -241,6 +285,7 @@ int main() {
     CONSTRUCTCPN();
     CHECKLTL(1);
     CHECKLTL(0);
+
     delete cpn;
     return 0;
 }

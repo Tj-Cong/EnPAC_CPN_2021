@@ -61,7 +61,16 @@ void cardexp::DestroyExp() {
         delete p;
         p=q;
     }
-};
+}
+
+int cardexp::placenum() {
+    if(constnum!=-1)
+        return 0;
+    cardmeta *p = expression;
+    int i=0;
+    for(i,p;p!=NULL;p=p->next,++i);
+    return i;
+}
 
 int atomicmeta::parse() {
     int pos = mystr.find("<=");
@@ -126,7 +135,6 @@ int atomicmeta::parse_card() {
     else {
         rightexp.constnum = atoi(rightplaces.c_str());
     }
-
     return OK;
 }
 
@@ -156,7 +164,7 @@ void atomicmeta::transform() {
 }
 
 
-void atomicmeta::addPlace2Exp(bool left, const string &placeName) {
+int atomicmeta::addPlace2Exp(bool left, const string &placeName) {
     cardexp *exp = left ? &leftexp : &rightexp;
     if (exp->constnum != -1) {
         cerr << "Error, try to add place to integer-constant type" << endl;
@@ -164,8 +172,9 @@ void atomicmeta::addPlace2Exp(bool left, const string &placeName) {
     }
     index_t idx_P = cpn->getPPosition(placeName);
     if (idx_P == INDEX_ERROR) {
-        cerr << "Error in locate place '" << placeName << "'!" << endl;
-        exit(-1);
+        return CONSISTENCY_ERROR;
+//        cerr << "Error in locate place '" << placeName << "'!" << endl;
+//        exit(-1);
     }
     else {
         cardmeta *meta = exp->expression;
@@ -180,6 +189,16 @@ void atomicmeta::addPlace2Exp(bool left, const string &placeName) {
         }
         meta->placeid = idx_P;
         meta->coefficient = 1;
+    }
+    return OK;
+}
+
+void atomicmeta::evaluate() {
+    if(mytype == PT_CARDINALITY) {
+        if(leftexp.constnum == 0) {
+            groundtruth = TRUE;
+//            cout<<"GroundTruth #1"<<endl;
+        }
     }
 }
 

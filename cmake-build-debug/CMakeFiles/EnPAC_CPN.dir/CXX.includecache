@@ -35,8 +35,6 @@ string
 -
 set
 -
-vector
--
 CPN.h
 /home/hecong/文档/EnPAC-CPN/BA/CPN.h
 
@@ -95,10 +93,6 @@ CPN_RG.h
 /home/hecong/文档/EnPAC-CPN/CPN_RG.h
 BA/buchi.h
 /home/hecong/文档/EnPAC-CPN/BA/buchi.h
-
-/home/hecong/文档/EnPAC-CPN/CPN_RG.cpp
-CPN_RG.h
-/home/hecong/文档/EnPAC-CPN/CPN_RG.h
 
 /home/hecong/文档/EnPAC-CPN/CPN_RG.h
 CPN.h
