@@ -82,6 +82,7 @@ public:
     SHORTNUM feconstnum;         /*the number of colors*/
     vector<string> members;      /*every colors' name*/
     map<string,COLORID> mapValue;  /*fast index structure of colors*/
+    fenqu
 };
 
 class FiniteIntRange:public Sort
@@ -156,7 +157,7 @@ public:
     void setColor(COLORID *cid,int size){};
     void setColor(COLORID cid,int position){};
     void setColor(COLORID cid){value = cid;}
-    void getColor(COLORID &cid){value = cid;}
+    void getColor(COLORID &cid){cid = value;}
     void getColor(COLORID *cid,int size){};
     void getColor(COLORID &cid,int position){};
     ~FIRSortValue(){};
@@ -237,6 +238,7 @@ public:
     void printToken() const;
     void printToken(string &str) const;
     bool operator>=(const Multiset &mm) const;
+//    Multiset & operator=(const Multiset &mm);
 };
 
 /*copy t2 into t1: t2=t1

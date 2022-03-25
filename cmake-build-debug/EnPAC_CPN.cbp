@@ -8,43 +8,43 @@
 		<Option virtualFolders="CMake Files\;"/>
 		<Build>
 			<Target title="all">
-				<Option working_dir="/home/hecong/文档/EnPAC-CPN/cmake-build-debug"/>
+				<Option working_dir="/mnt/d/ProjFiles/ClionProj/EnPAC-CPN/cmake-build-debug"/>
 				<Option type="4"/>
 				<MakeCommands>
-					<Build command="/usr/bin/make -j12 -f &quot;/home/hecong/文档/EnPAC-CPN/cmake-build-debug/Makefile&quot;  VERBOSE=1 all"/>
-					<CompileFile command="/usr/bin/make -j12 -f &quot;/home/hecong/文档/EnPAC-CPN/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
-					<Clean command="/usr/bin/make -j12 -f &quot;/home/hecong/文档/EnPAC-CPN/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
-					<DistClean command="/usr/bin/make -j12 -f &quot;/home/hecong/文档/EnPAC-CPN/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
-				</MakeCommands>
-			</Target>
-			<Target title="rebuild_cache">
-				<Option working_dir="/home/hecong/文档/EnPAC-CPN/cmake-build-debug"/>
-				<Option type="4"/>
-				<MakeCommands>
-					<Build command="/usr/bin/make -j12 -f &quot;/home/hecong/文档/EnPAC-CPN/cmake-build-debug/Makefile&quot;  VERBOSE=1 rebuild_cache"/>
-					<CompileFile command="/usr/bin/make -j12 -f &quot;/home/hecong/文档/EnPAC-CPN/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
-					<Clean command="/usr/bin/make -j12 -f &quot;/home/hecong/文档/EnPAC-CPN/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
-					<DistClean command="/usr/bin/make -j12 -f &quot;/home/hecong/文档/EnPAC-CPN/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<Build command="/usr/bin/make -j8 -f &quot;/mnt/d/ProjFiles/ClionProj/EnPAC-CPN/cmake-build-debug/Makefile&quot;  VERBOSE=1 all"/>
+					<CompileFile command="/usr/bin/make -j8 -f &quot;/mnt/d/ProjFiles/ClionProj/EnPAC-CPN/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j8 -f &quot;/mnt/d/ProjFiles/ClionProj/EnPAC-CPN/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j8 -f &quot;/mnt/d/ProjFiles/ClionProj/EnPAC-CPN/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
 				</MakeCommands>
 			</Target>
 			<Target title="edit_cache">
-				<Option working_dir="/home/hecong/文档/EnPAC-CPN/cmake-build-debug"/>
+				<Option working_dir="/mnt/d/ProjFiles/ClionProj/EnPAC-CPN/cmake-build-debug"/>
 				<Option type="4"/>
 				<MakeCommands>
-					<Build command="/usr/bin/make -j12 -f &quot;/home/hecong/文档/EnPAC-CPN/cmake-build-debug/Makefile&quot;  VERBOSE=1 edit_cache"/>
-					<CompileFile command="/usr/bin/make -j12 -f &quot;/home/hecong/文档/EnPAC-CPN/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
-					<Clean command="/usr/bin/make -j12 -f &quot;/home/hecong/文档/EnPAC-CPN/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
-					<DistClean command="/usr/bin/make -j12 -f &quot;/home/hecong/文档/EnPAC-CPN/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<Build command="/usr/bin/make -j8 -f &quot;/mnt/d/ProjFiles/ClionProj/EnPAC-CPN/cmake-build-debug/Makefile&quot;  VERBOSE=1 edit_cache"/>
+					<CompileFile command="/usr/bin/make -j8 -f &quot;/mnt/d/ProjFiles/ClionProj/EnPAC-CPN/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j8 -f &quot;/mnt/d/ProjFiles/ClionProj/EnPAC-CPN/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j8 -f &quot;/mnt/d/ProjFiles/ClionProj/EnPAC-CPN/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="rebuild_cache">
+				<Option working_dir="/mnt/d/ProjFiles/ClionProj/EnPAC-CPN/cmake-build-debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j8 -f &quot;/mnt/d/ProjFiles/ClionProj/EnPAC-CPN/cmake-build-debug/Makefile&quot;  VERBOSE=1 rebuild_cache"/>
+					<CompileFile command="/usr/bin/make -j8 -f &quot;/mnt/d/ProjFiles/ClionProj/EnPAC-CPN/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j8 -f &quot;/mnt/d/ProjFiles/ClionProj/EnPAC-CPN/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j8 -f &quot;/mnt/d/ProjFiles/ClionProj/EnPAC-CPN/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
 				</MakeCommands>
 			</Target>
 			<Target title="EnPAC_CPN">
-				<Option output="/home/hecong/文档/EnPAC-CPN/cmake-build-debug/EnPAC_CPN" prefix_auto="0" extension_auto="0"/>
-				<Option working_dir="/home/hecong/文档/EnPAC-CPN/cmake-build-debug"/>
+				<Option output="/mnt/d/ProjFiles/ClionProj/EnPAC-CPN/cmake-build-debug/EnPAC_CPN" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/mnt/d/ProjFiles/ClionProj/EnPAC-CPN/cmake-build-debug"/>
 				<Option object_output="./"/>
 				<Option type="1"/>
 				<Option compiler="gcc"/>
 				<Compiler>
-					<Add directory="/home/hecong/文档/EnPAC-CPN/."/>
+					<Add directory="/mnt/d/ProjFiles/ClionProj/EnPAC-CPN/."/>
 					<Add directory="/usr/include/c++/9"/>
 					<Add directory="/usr/include/x86_64-linux-gnu/c++/9"/>
 					<Add directory="/usr/include/c++/9/backward"/>
@@ -54,20 +54,20 @@
 					<Add directory="/usr/include"/>
 				</Compiler>
 				<MakeCommands>
-					<Build command="/usr/bin/make -j12 -f &quot;/home/hecong/文档/EnPAC-CPN/cmake-build-debug/Makefile&quot;  VERBOSE=1 EnPAC_CPN"/>
-					<CompileFile command="/usr/bin/make -j12 -f &quot;/home/hecong/文档/EnPAC-CPN/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
-					<Clean command="/usr/bin/make -j12 -f &quot;/home/hecong/文档/EnPAC-CPN/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
-					<DistClean command="/usr/bin/make -j12 -f &quot;/home/hecong/文档/EnPAC-CPN/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<Build command="/usr/bin/make -j8 -f &quot;/mnt/d/ProjFiles/ClionProj/EnPAC-CPN/cmake-build-debug/Makefile&quot;  VERBOSE=1 EnPAC_CPN"/>
+					<CompileFile command="/usr/bin/make -j8 -f &quot;/mnt/d/ProjFiles/ClionProj/EnPAC-CPN/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j8 -f &quot;/mnt/d/ProjFiles/ClionProj/EnPAC-CPN/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j8 -f &quot;/mnt/d/ProjFiles/ClionProj/EnPAC-CPN/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
 				</MakeCommands>
 			</Target>
 			<Target title="EnPAC_CPN/fast">
-				<Option output="/home/hecong/文档/EnPAC-CPN/cmake-build-debug/EnPAC_CPN" prefix_auto="0" extension_auto="0"/>
-				<Option working_dir="/home/hecong/文档/EnPAC-CPN/cmake-build-debug"/>
+				<Option output="/mnt/d/ProjFiles/ClionProj/EnPAC-CPN/cmake-build-debug/EnPAC_CPN" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/mnt/d/ProjFiles/ClionProj/EnPAC-CPN/cmake-build-debug"/>
 				<Option object_output="./"/>
 				<Option type="1"/>
 				<Option compiler="gcc"/>
 				<Compiler>
-					<Add directory="/home/hecong/文档/EnPAC-CPN/."/>
+					<Add directory="/mnt/d/ProjFiles/ClionProj/EnPAC-CPN/."/>
 					<Add directory="/usr/include/c++/9"/>
 					<Add directory="/usr/include/x86_64-linux-gnu/c++/9"/>
 					<Add directory="/usr/include/c++/9/backward"/>
@@ -77,95 +77,95 @@
 					<Add directory="/usr/include"/>
 				</Compiler>
 				<MakeCommands>
-					<Build command="/usr/bin/make -j12 -f &quot;/home/hecong/文档/EnPAC-CPN/cmake-build-debug/Makefile&quot;  VERBOSE=1 EnPAC_CPN/fast"/>
-					<CompileFile command="/usr/bin/make -j12 -f &quot;/home/hecong/文档/EnPAC-CPN/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
-					<Clean command="/usr/bin/make -j12 -f &quot;/home/hecong/文档/EnPAC-CPN/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
-					<DistClean command="/usr/bin/make -j12 -f &quot;/home/hecong/文档/EnPAC-CPN/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<Build command="/usr/bin/make -j8 -f &quot;/mnt/d/ProjFiles/ClionProj/EnPAC-CPN/cmake-build-debug/Makefile&quot;  VERBOSE=1 EnPAC_CPN/fast"/>
+					<CompileFile command="/usr/bin/make -j8 -f &quot;/mnt/d/ProjFiles/ClionProj/EnPAC-CPN/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j8 -f &quot;/mnt/d/ProjFiles/ClionProj/EnPAC-CPN/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j8 -f &quot;/mnt/d/ProjFiles/ClionProj/EnPAC-CPN/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
 				</MakeCommands>
 			</Target>
 		</Build>
-		<Unit filename="/home/hecong/文档/EnPAC-CPN/BA/Syntax_Tree.cpp">
+		<Unit filename="/mnt/d/ProjFiles/ClionProj/EnPAC-CPN/BA/Syntax_Tree.cpp">
 			<Option target="EnPAC_CPN"/>
 		</Unit>
-		<Unit filename="/home/hecong/文档/EnPAC-CPN/BA/Syntax_Tree.h">
+		<Unit filename="/mnt/d/ProjFiles/ClionProj/EnPAC-CPN/BA/Syntax_Tree.h">
 			<Option target="EnPAC_CPN"/>
 		</Unit>
-		<Unit filename="/home/hecong/文档/EnPAC-CPN/BA/VWAA.cpp">
+		<Unit filename="/mnt/d/ProjFiles/ClionProj/EnPAC-CPN/BA/VWAA.cpp">
 			<Option target="EnPAC_CPN"/>
 		</Unit>
-		<Unit filename="/home/hecong/文档/EnPAC-CPN/BA/VWAA.h">
+		<Unit filename="/mnt/d/ProjFiles/ClionProj/EnPAC-CPN/BA/VWAA.h">
 			<Option target="EnPAC_CPN"/>
 		</Unit>
-		<Unit filename="/home/hecong/文档/EnPAC-CPN/BA/atomic.cpp">
+		<Unit filename="/mnt/d/ProjFiles/ClionProj/EnPAC-CPN/BA/atomic.cpp">
 			<Option target="EnPAC_CPN"/>
 		</Unit>
-		<Unit filename="/home/hecong/文档/EnPAC-CPN/BA/atomic.h">
+		<Unit filename="/mnt/d/ProjFiles/ClionProj/EnPAC-CPN/BA/atomic.h">
 			<Option target="EnPAC_CPN"/>
 		</Unit>
-		<Unit filename="/home/hecong/文档/EnPAC-CPN/BA/buchi.cpp">
+		<Unit filename="/mnt/d/ProjFiles/ClionProj/EnPAC-CPN/BA/buchi.cpp">
 			<Option target="EnPAC_CPN"/>
 		</Unit>
-		<Unit filename="/home/hecong/文档/EnPAC-CPN/BA/buchi.h">
+		<Unit filename="/mnt/d/ProjFiles/ClionProj/EnPAC-CPN/BA/buchi.h">
 			<Option target="EnPAC_CPN"/>
 		</Unit>
-		<Unit filename="/home/hecong/文档/EnPAC-CPN/BA/set.h">
+		<Unit filename="/mnt/d/ProjFiles/ClionProj/EnPAC-CPN/BA/set.h">
 			<Option target="EnPAC_CPN"/>
 		</Unit>
-		<Unit filename="/home/hecong/文档/EnPAC-CPN/BA/tinystr.cpp">
+		<Unit filename="/mnt/d/ProjFiles/ClionProj/EnPAC-CPN/BA/tinystr.cpp">
 			<Option target="EnPAC_CPN"/>
 		</Unit>
-		<Unit filename="/home/hecong/文档/EnPAC-CPN/BA/tinystr.h">
+		<Unit filename="/mnt/d/ProjFiles/ClionProj/EnPAC-CPN/BA/tinystr.h">
 			<Option target="EnPAC_CPN"/>
 		</Unit>
-		<Unit filename="/home/hecong/文档/EnPAC-CPN/BA/tinyxml.cpp">
+		<Unit filename="/mnt/d/ProjFiles/ClionProj/EnPAC-CPN/BA/tinyxml.cpp">
 			<Option target="EnPAC_CPN"/>
 		</Unit>
-		<Unit filename="/home/hecong/文档/EnPAC-CPN/BA/tinyxml.h">
+		<Unit filename="/mnt/d/ProjFiles/ClionProj/EnPAC-CPN/BA/tinyxml.h">
 			<Option target="EnPAC_CPN"/>
 		</Unit>
-		<Unit filename="/home/hecong/文档/EnPAC-CPN/BA/tinyxmlerror.cpp">
+		<Unit filename="/mnt/d/ProjFiles/ClionProj/EnPAC-CPN/BA/tinyxmlerror.cpp">
 			<Option target="EnPAC_CPN"/>
 		</Unit>
-		<Unit filename="/home/hecong/文档/EnPAC-CPN/BA/tinyxmlparser.cpp">
+		<Unit filename="/mnt/d/ProjFiles/ClionProj/EnPAC-CPN/BA/tinyxmlparser.cpp">
 			<Option target="EnPAC_CPN"/>
 		</Unit>
-		<Unit filename="/home/hecong/文档/EnPAC-CPN/CPN.cpp">
+		<Unit filename="/mnt/d/ProjFiles/ClionProj/EnPAC-CPN/CPN.cpp">
 			<Option target="EnPAC_CPN"/>
 		</Unit>
-		<Unit filename="/home/hecong/文档/EnPAC-CPN/CPN.h">
+		<Unit filename="/mnt/d/ProjFiles/ClionProj/EnPAC-CPN/CPN.h">
 			<Option target="EnPAC_CPN"/>
 		</Unit>
-		<Unit filename="/home/hecong/文档/EnPAC-CPN/CPN_Product.cpp">
+		<Unit filename="/mnt/d/ProjFiles/ClionProj/EnPAC-CPN/CPN_Product.cpp">
 			<Option target="EnPAC_CPN"/>
 		</Unit>
-		<Unit filename="/home/hecong/文档/EnPAC-CPN/CPN_Product.h">
+		<Unit filename="/mnt/d/ProjFiles/ClionProj/EnPAC-CPN/CPN_Product.h">
 			<Option target="EnPAC_CPN"/>
 		</Unit>
-		<Unit filename="/home/hecong/文档/EnPAC-CPN/CPN_RG.cpp">
+		<Unit filename="/mnt/d/ProjFiles/ClionProj/EnPAC-CPN/CPN_RG.cpp">
 			<Option target="EnPAC_CPN"/>
 		</Unit>
-		<Unit filename="/home/hecong/文档/EnPAC-CPN/CPN_RG.h">
+		<Unit filename="/mnt/d/ProjFiles/ClionProj/EnPAC-CPN/CPN_RG.h">
 			<Option target="EnPAC_CPN"/>
 		</Unit>
-		<Unit filename="/home/hecong/文档/EnPAC-CPN/base.h">
+		<Unit filename="/mnt/d/ProjFiles/ClionProj/EnPAC-CPN/base.h">
 			<Option target="EnPAC_CPN"/>
 		</Unit>
-		<Unit filename="/home/hecong/文档/EnPAC-CPN/expression.cpp">
+		<Unit filename="/mnt/d/ProjFiles/ClionProj/EnPAC-CPN/expression.cpp">
 			<Option target="EnPAC_CPN"/>
 		</Unit>
-		<Unit filename="/home/hecong/文档/EnPAC-CPN/expression.h">
+		<Unit filename="/mnt/d/ProjFiles/ClionProj/EnPAC-CPN/expression.h">
 			<Option target="EnPAC_CPN"/>
 		</Unit>
-		<Unit filename="/home/hecong/文档/EnPAC-CPN/main.cpp">
+		<Unit filename="/mnt/d/ProjFiles/ClionProj/EnPAC-CPN/main.cpp">
 			<Option target="EnPAC_CPN"/>
 		</Unit>
-		<Unit filename="/home/hecong/文档/EnPAC-CPN/sort.cpp">
+		<Unit filename="/mnt/d/ProjFiles/ClionProj/EnPAC-CPN/sort.cpp">
 			<Option target="EnPAC_CPN"/>
 		</Unit>
-		<Unit filename="/home/hecong/文档/EnPAC-CPN/sort.h">
+		<Unit filename="/mnt/d/ProjFiles/ClionProj/EnPAC-CPN/sort.h">
 			<Option target="EnPAC_CPN"/>
 		</Unit>
-		<Unit filename="/home/hecong/文档/EnPAC-CPN/CMakeLists.txt">
+		<Unit filename="/mnt/d/ProjFiles/ClionProj/EnPAC-CPN/CMakeLists.txt">
 			<Option virtualFolder="CMake Files\"/>
 		</Unit>
 	</Project>

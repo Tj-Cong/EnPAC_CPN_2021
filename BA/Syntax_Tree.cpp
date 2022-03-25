@@ -200,6 +200,7 @@ void Syntax_Tree::BuildTree(TiXmlElement *xmlnode, STNode* &stnode,bool &consist
                 stnode->formula += m->GetText();
                 stnode->formula += ",";
                 index_t idx_T = cpn->getTPosition(m->GetText());                           //AT
+                stnode->relPlaceOrTransition.insert(idx_T);
                 if (idx_T == INDEX_ERROR){
                     consistency = false;
                     return;
@@ -239,6 +240,8 @@ void Syntax_Tree::BuildTree(TiXmlElement *xmlnode, STNode* &stnode,bool &consist
             {
                 stnode->formula += left->GetText();
                 stnode->formula += ",";
+                index_t idx_P = cpn->getPPosition(left->GetText());
+                stnode->relPlaceOrTransition.insert(idx_P);
                 if(AT.atomics[AT.atomiccount].addPlace2Exp(1,left->GetText())==CONSISTENCY_ERROR)
                     consistency = false;
                 left = left->NextSiblingElement();
@@ -1144,4 +1147,37 @@ void Syntax_Tree::PrintAT() {
         cout<<endl;
     }
 
+}
+
+void Syntax_Tree::getVisibleIterms() {
+    getVisibleIterms(root);
+}
+
+void Syntax_Tree::getVisibleIterms(STNode *n) {
+    if(n->ntyp == ROOT)
+        getVisibleIterms(n->nleft);
+    if(n->ntyp == PREDICATE) {
+        visibleIterms.insert(n->relPlaceOrTransition.begin(),n->relPlaceOrTransition.end());
+    }
+    else {
+        if(n->nleft)
+            getVisibleIterms(n->nleft);
+        if(n->nright)
+            getVisibleIterms(n->nright);
+    }
+}
+
+bool Syntax_Tree::isNextFree(STNode *n) {
+    if(n->ntyp == NEXT) {
+        NEXTFREE = false;
+        return false;
+    }
+    else {
+        bool leftResult = true,rightResult=true;
+        if(n->nleft)
+            leftResult = isNextFree(n->nleft);
+        if(n->nright)
+            rightResult = isNextFree(n->nright);
+        return leftResult && rightResult;
+    }
 }

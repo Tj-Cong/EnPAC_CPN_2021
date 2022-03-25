@@ -59,6 +59,8 @@ void CPN::getSize(char *filename) {
     }
 
     TiXmlElement *net = root->FirstChildElement("net");
+    // debug print
+//    cout << net->FirstAttribute()->Value() <<endl;
     TiXmlElement *page = net->FirstChildElement("page");
 
     //doing the first job;
@@ -553,4 +555,67 @@ index_t CPN::getTPosition(string str) {
     else {
         return idx_t->second;
     }
+}
+
+void CPN::computeVis(set<index_t> &visItems, bool cardinality) {
+    for(int i=0;i<transitioncount;i++)
+        transition[i].significant = false;
+    for(int i=0;i<placecount;i++)
+        place[i].significant = false;
+
+    set<index_t> visTransitions;
+    if(cardinality) {
+        set<index_t>::iterator iter;
+        for(iter=visItems.begin();iter!=visItems.end();iter++) {
+            CPN_Place &pp = place[*iter];
+            pp.significant = true;
+            for(int i=0;i<pp.producer.size();i++) {
+                visTransitions.insert(pp.producer[i].idx);
+            }
+            for(int i=0;i<pp.consumer.size();i++) {
+                visTransitions.insert(pp.consumer[i].idx);
+            }
+        }
+    }
+    else {
+        visTransitions = visItems;
+    }
+    VISpread(visTransitions);
+}
+
+void CPN::VISpread(set<index_t> &visTransitions) {
+    set<index_t> unexpanded;
+    unexpanded = visTransitions;
+    while (!unexpanded.empty()) {
+        index_t idxT = *unexpanded.begin();
+        unexpanded.erase(unexpanded.begin());
+        CPN_Transition &expandTran = transition[idxT];
+        expandTran.significant = true;
+        vector<CSArc>::iterator sarcP;
+        for(sarcP=expandTran.producer.begin();sarcP!=expandTran.producer.end();sarcP++) {
+            CPN_Place &pp = place[sarcP->idx];
+            pp.significant = true;
+            vector<CSArc>::iterator sarcT;
+            for(sarcT=pp.producer.begin();sarcT!=pp.producer.end();sarcT++) {
+                if(!transition[sarcT->idx].significant) {
+                    transition[sarcT->idx].significant = true;
+                    unexpanded.insert(sarcT->idx);
+                }
+            }
+            for(sarcT=pp.consumer.begin();sarcT!=pp.consumer.end();sarcT++) {
+                if(!transition[sarcT->idx].significant) {
+                    transition[sarcT->idx].significant = true;
+                    unexpanded.insert(sarcT->idx);
+                }
+            }
+        }
+    }
+}
+
+bool CPN::utilizeSlice() {
+    for(int i=0;i<transitioncount;i++) {
+        if(!transition[i].significant)
+            return true;
+    }
+    return false;
 }

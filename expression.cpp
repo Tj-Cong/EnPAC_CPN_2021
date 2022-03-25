@@ -405,20 +405,26 @@ void hlinscription::Tree_Constructor(TiXmlElement *xmlnode, arcnode *&curnode, i
         TiXmlElement *tupleterm = xmlnode->FirstChildElement();
         Tree_Constructor(tupleterm,curnode->leftnode,0);
         tupleterm = tupleterm->NextSiblingElement();
-        Tree_Constructor(tupleterm,curnode->rightnode,1);
-        tupleterm = tupleterm->NextSiblingElement();
-        tuplenum = 2;
-
-        arcnode *present,*predecessor = curnode;
-        while (tupleterm) {
-            present = new arcnode;
-            present->mytype = hlnodetype::tuple;
-            present->leftnode = predecessor->rightnode;
-            predecessor->rightnode = present;
-            Tree_Constructor(tupleterm,present->rightnode,tuplenum);
-            predecessor = present;
+        if (!tupleterm) {
+//            cout << "check, tuple has only one term" << endl;
+            curnode->rightnode = new arcnode;
+            curnode->rightnode->mytype = hlnodetype::none;
+        } else {
+            Tree_Constructor(tupleterm,curnode->rightnode,1);
             tupleterm = tupleterm->NextSiblingElement();
-            tuplenum++;
+            tuplenum = 2;
+
+            arcnode *present,*predecessor = curnode;
+            while (tupleterm) {
+                present = new arcnode;
+                present->mytype = hlnodetype::tuple;
+                present->leftnode = predecessor->rightnode;
+                predecessor->rightnode = present;
+                Tree_Constructor(tupleterm,present->rightnode,tuplenum);
+                predecessor = present;
+                tupleterm = tupleterm->NextSiblingElement();
+                tuplenum++;
+            }
         }
     }
     else if(text == "add") {
@@ -693,30 +699,37 @@ void hlinscription::to_Multiset(arcnode *node,Multiset &ms,const COLORID *Bindin
             break;
         }
         case hlnodetype::tuple: {
-            int psnum = SortTable::productsort[placesid].sortnum;
-            BindingList bindingList;
-            bindingList.strategy = byhead;
-            binding *initbind = new binding;
-            bindingList.insert(initbind);
+            if (node->rightnode->mytype != hlnodetype::none) {
+                int psnum = SortTable::productsort[placesid].sortnum;
+                BindingList bindingList;
+                bindingList.strategy = byhead;
+                binding *initbind = new binding;
+                bindingList.insert(initbind);
 
-            getTupleColor(node,bindingList,Binding);
+                getTupleColor(node,bindingList,Binding);
 
-            binding *p = bindingList.listhead;
-            while (p) {
-                /*anomaly detection*/
-                for(int i=0;i<psnum;++i) {
-                    if(p->vararray[i]==MAXCOLORID) {
-                        cerr<<"[ERROR @ hlinscription::to_Multiset] MAXCOLORID error."<<endl;
-                        exit(-1);
+                binding *p = bindingList.listhead;
+                while (p) {
+                    /*anomaly detection*/
+                    for(int i=0;i<psnum;++i) {
+                        if(p->vararray[i]==MAXCOLORID) {
+                            cerr<<"[ERROR @ hlinscription::to_Multiset] MAXCOLORID error."<<endl;
+                            exit(-1);
+                        }
                     }
+
+                    Tokens *token = new Tokens;
+                    token->initiate(tokennum,placetid,psnum);
+                    token->tokenvalue->setColor(p->vararray,psnum);
+                    ms.insert(token);
+
+                    p=p->next;
                 }
+            }
+            else if (node->rightnode->mytype == hlnodetype::none) {
+                // 只有一个元素的tuple，直接按照左节点处理  ## 存疑
+                to_Multiset(node->leftnode, ms, Binding, tokennum);
 
-                Tokens *token = new Tokens;
-                token->initiate(tokennum,placetid,psnum);
-                token->tokenvalue->setColor(p->vararray,psnum);
-                ms.insert(token);
-
-                p=p->next;
             }
 
             break;
@@ -926,13 +939,21 @@ void hlinscription::computeEXP(arcnode *node) {
             break;
         }
         case hlnodetype::tuple: {
-            computeEXP(node->leftnode);
-            computeEXP(node->rightnode);
-            if(node->leftnode->position==0) {
-                node->myexp = "[";
-            }
-            node->myexp += node->leftnode->myexp + "," + node->rightnode->myexp;
-            if(node->rightnode->mytype!=hlnodetype::tuple) {
+            if (node->rightnode->mytype != hlnodetype::none) {
+                computeEXP(node->leftnode);
+                computeEXP(node->rightnode);
+                if(node->leftnode->position==0) {
+                    node->myexp = "[";
+                }
+                node->myexp += node->leftnode->myexp + "," + node->rightnode->myexp;
+                if(node->rightnode->mytype!=hlnodetype::tuple) {
+                    node->myexp += "]";
+                }
+            } else if (node->rightnode->mytype == hlnodetype::none) {
+                computeEXP(node->leftnode);
+                if (node->leftnode->position==0)
+                    node->myexp = "[";
+                node->myexp += node->leftnode->myexp;
                 node->myexp += "]";
             }
             break;
@@ -1138,7 +1159,14 @@ int hlinscription::arcmeta_pattern_match(arcnode *curmeta, Tokens *pattern, COLO
         return arcmeta_pattern_match(curmeta->leftnode,pattern,vararry);
     }
     else if(curmeta->mytype == hlnodetype::tuple) {
-        return tuplemeta_pattern_match(curmeta,pattern,vararry);
+        if (curmeta->rightnode->mytype != hlnodetype::none)
+            return tuplemeta_pattern_match(curmeta, pattern, vararry);
+        else {
+//            cout << "single tuple" <<endl;
+            // 只有一个元素的元组，与单一变量同样处理
+            // 即：左侧节点类型，采用直接递归模式  ## 存疑
+            return arcmeta_pattern_match(curmeta->leftnode, pattern, vararry);
+        }
     }
     else if(curmeta->mytype == var) {
         COLORID cid;
@@ -1357,10 +1385,15 @@ void hlinscription::TokenSum(arcnode *node) {
         node->tokencount = node->leftnode->tokencount;
     }
     else if(node->mytype == hlnodetype::tuple) {
-        TokenSum(node->leftnode);
-        TokenSum(node->rightnode);
-        node->tokencount = node->leftnode->tokencount > node->rightnode->tokencount ?
-                            node->leftnode->tokencount : node->rightnode->tokencount;
+        if (node->rightnode) {
+            TokenSum(node->leftnode);
+            TokenSum(node->rightnode);
+            node->tokencount = node->leftnode->tokencount > node->rightnode->tokencount ?
+                    node->leftnode->tokencount : node->rightnode->tokencount;
+        } else {
+            TokenSum(node->leftnode);
+            node->tokencount = node->leftnode->tokencount;
+        }
     }
     else if(node->mytype == hlnodetype::numberof) {
         TokenSum(node->leftnode);
@@ -1548,22 +1581,32 @@ void hlinitialmarking::Tree_Constructor(TiXmlElement *xmlnode, initMarking_node 
         TiXmlElement *tupleterm = xmlnode->FirstChildElement();
         Tree_Constructor(tupleterm,curnode->leftnode,0);
         tupleterm = tupleterm->NextSiblingElement();
-        Tree_Constructor(tupleterm,curnode->rightnode,1);
-        tupleterm = tupleterm->NextSiblingElement();
-
-        initMarking_node *present, *predecessor;
-        predecessor = curnode;
-        tuplenum = 2;
-        while(tupleterm) {
-            present = new initMarking_node;
-            present->mytype = hlnodetype::tuple;
-            present->mm.initiate(placetid,placesid);
-            present->leftnode = predecessor->rightnode;
-            predecessor->rightnode = present;
-            Tree_Constructor(tupleterm,present->rightnode,tuplenum);
-            predecessor = present;
+        if (!tupleterm){
+            // 进入这个分支，说明该tuple只有一个元素  ## 增加于EnPAC-2022
+//            cout << "check, tuple has only one term" <<endl;
+            curnode->rightnode = new initMarking_node;
+            curnode->rightnode->mytype = hlnodetype::none;
+            tuplenum = 1;
+//            exit(0);
+        } else {
+            // 原有处理逻辑，tuple分支大于或等于2  ## 拆分于EnPAC2022
+            Tree_Constructor(tupleterm,curnode->rightnode,1);
             tupleterm = tupleterm->NextSiblingElement();
-            tuplenum++;
+
+            initMarking_node *present, *predecessor;
+            predecessor = curnode;
+            tuplenum = 2;
+            while(tupleterm) {
+                present = new initMarking_node;
+                present->mytype = hlnodetype::tuple;
+                present->mm.initiate(placetid,placesid);
+                present->leftnode = predecessor->rightnode;
+                predecessor->rightnode = present;
+                Tree_Constructor(tupleterm,present->rightnode,tuplenum);
+                predecessor = present;
+                tupleterm = tupleterm->NextSiblingElement();
+                tuplenum++;
+            }
         }
     }
     else if(text == "useroperator") {
@@ -1702,32 +1745,44 @@ void hlinitialmarking::get_Multiset(initMarking_node *node) {
             break;
         }
         case hlnodetype::tuple: {
-            get_Multiset(node->leftnode);
-            get_Multiset(node->rightnode);
+            // 需要对tuple做出针对性处理  ## 只有一个元素的tuple，rightnode = nullptr，  EnPAC-2022
+            if (node->rightnode->mytype != hlnodetype::none) {
+                get_Multiset(node->leftnode);
+                get_Multiset(node->rightnode);
 
-            Tokens *token,*left,*right;
-            int psnum = SortTable::productsort[placesid].sortnum;
-            COLORID *product_color = new COLORID[psnum];
-            COLORID *left_color = new COLORID[psnum];
-            COLORID *right_color = new COLORID[psnum];
+                Tokens *token,*left,*right;
+                int psnum = SortTable::productsort[placesid].sortnum;
+                COLORID *product_color = new COLORID[psnum];
+                COLORID *left_color = new COLORID[psnum];
+                COLORID *right_color = new COLORID[psnum];
 
-            for (left=node->leftnode->mm.tokenQ->next;left;left=left->next)
-            {
-                left->tokenvalue->getColor(left_color,psnum);
-                for (right=node->rightnode->mm.tokenQ->next;right;right=right->next)
+                for (left=node->leftnode->mm.tokenQ->next;left;left=left->next)
                 {
-                    right->tokenvalue->getColor(right_color,psnum);
-                    pattern_merge(product_color,left_color,right_color,psnum);
-                    token = new Tokens;
-                    token->initiate(1,placetid,psnum);
-                    token->tokenvalue->setColor(product_color,psnum);
-                    node->mm.insert(token);
+                    left->tokenvalue->getColor(left_color,psnum);
+                    for (right=node->rightnode->mm.tokenQ->next;right;right=right->next)
+                    {
+                        right->tokenvalue->getColor(right_color,psnum);
+                        pattern_merge(product_color,left_color,right_color,psnum);
+                        token = new Tokens;
+                        token->initiate(1,placetid,psnum);
+                        token->tokenvalue->setColor(product_color,psnum);
+                        node->mm.insert(token);
+                    }
                 }
-            }
 
-            delete [] product_color;
-            delete [] left_color;
-            delete [] right_color;
+                delete [] product_color;
+                delete [] left_color;
+                delete [] right_color;
+            } else if (node->rightnode->mytype == hlnodetype::none) {
+                // 针对只有一个元素的tuple处理，认为是普通状态，全集（特例中出现的全集）
+//                cout << "check, no right node at this initial marking tree" << endl;
+                get_Multiset(node->leftnode);
+                //    在特定例子中（该分支处理情况），tuple内含一个all，代表某种颜色的
+                // 全集，所以将其提取到的all节点的mm复制到父节点
+
+                MultisetCopy(node->mm, node->leftnode->mm, placetid, placesid);
+
+            }
             break;
         }
         default: {

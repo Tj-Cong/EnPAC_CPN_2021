@@ -77,7 +77,14 @@ int ProductState::NEXTBINDING() {
 int ProductState::NEXTTRANSITION() {
     if(fireinfo.tranid>=cpn->transitioncount)
         return FAIL;
-    fireinfo.tranid++;
+    if(NEXTFREE) {
+        do{
+            fireinfo.tranid++;
+        } while(!cpn->transition[fireinfo.tranid].significant && fireinfo.tranid<cpn->transitioncount);
+    }
+    else {
+        fireinfo.tranid++;
+    }
     fireinfo.virgin = true;
     if(fireinfo.tranid>=cpn->transitioncount)
         return FAIL;
@@ -818,7 +825,7 @@ void CPN_Product_Automata::detect_memory() {
             }
             fclose(pf);
             size = size/1024;
-            if(100*size/total_mem > 85)
+            if(100*size/total_mem > 90)
             {
                 memory_flag = false;
                 ready2exit = true;
@@ -844,39 +851,39 @@ unsigned short CPN_Product_Automata::ModelChecker(string propertyid, unsigned sh
     getProduct();
 
     string re;
+    string slice = cpn->utilizeSlice() && NEXTFREE?"SLICE":"";
     if(timeflag && memory_flag && stack_flag && consistency)
     {
         if(result)
         {
             re="TRUE";
-
-            cout << "FORMULA " << propertyid << " " << re;
+            cout << "FORMULA " << propertyid << " " << re <<" "+slice;
             ret = 1;
         }
         else
         {
             re="FALSE";
-            cout << "FORMULA " << propertyid + " " << re;
+            cout << "FORMULA " << propertyid + " " << re <<" "+slice;
             ret = 0;
         }
     }
     else if(!memory_flag)
     {
-        cout<<"FORMULA "<<propertyid<<" "<<"CANNOT_COMPUTE"<<" MEMORY_OVERFLOW";
+        cout<<"FORMULA "<<propertyid<<" "<<"CANNOT_COMPUTE-MEMORY";
         ret = -1;
     }
     else if(!stack_flag)
     {
-        cout<<"FORMULA "<<propertyid<<" "<<"CANNOT_COMPUTE"<<" STACK_OVERFLOW";
+        cout<<"FORMULA "<<propertyid<<" "<<"CANNOT_COMPUTE-STACK";
         ret = -1;
     }
     else if(!consistency) {
-        cout<<"FORMULA "<<propertyid<<" "<<"CANNOT_COMPUTE"<<" CONSISTENCY_ERROR";
+        cout<<"FORMULA "<<propertyid<<" "<<"CANNOT_COMPUTE-CONSISTENCY";
         ret = -1;
     }
     else if(!timeflag)
     {
-        cout<<"FORMULA "<<propertyid<<" "<<"CANNOT_COMPUTE"<<" TIME_RUNOUT";
+        cout<<"FORMULA "<<propertyid<<" "<<"CANNOT_COMPUTE-TIME";
         ret = -1;
     }
     unsigned short timeleft=alarm(0);

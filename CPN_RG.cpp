@@ -595,8 +595,10 @@ bool CPN_RG::NodeExist(CPN_RGNode *state, CPN_RGNode *&existstate) {
 }
 
 void CPN_RG::Generate() {
-    if(initnode == NULL)
+    if(initnode == NULL) {
         CPNRGinitnode();
+        initnode->all_FireableBindings();
+    }
     Generate(initnode);
 }
 
@@ -607,6 +609,7 @@ void CPN_RG::Generate(CPN_RGNode *state) {
         while (p) {
             CPN_RGNode *child = RGNode_Child(state,p,i,exist);
             if(!exist) {
+                child->all_FireableBindings();
                 Generate(child);
             }
             p=p->next;

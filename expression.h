@@ -74,7 +74,7 @@ public:
 | *                            hlinscription                            * |
 | *                                                                     * |
 \*************************************************************************/
-enum hlnodetype {color,numberof,tuple,add,all,predecessor,successor,subtract,var};
+enum hlnodetype {color,numberof,tuple,add,all,predecessor,successor,subtract,var,none};
 typedef struct arcnode
 {
     hlnodetype mytype;

@@ -9,6 +9,7 @@ CPN *cpn;
 CPN_RG *cpnRG;
 bool ready2exit = false;
 bool consistency;
+bool NEXTFREE = true;
 //以MB为单位
 short int total_mem;
 short int total_swap;
@@ -31,7 +32,7 @@ void print_info() {
 
 void CHECKMEM() {
     mypid = getpid();
-    total_mem = 16000;
+    total_mem = 8000;
 }
 
 double get_time() {
@@ -54,12 +55,16 @@ void CONSTRUCTCPN() {
     cpn = cpnet;
     CPN_RG *graph;
     atomictable AT;
-//    graph = new CPN_RG(AT);
+    graph = new CPN_RG(AT);
 //    graph->Generate();
 //    cout<<"STATE SPACE SIZE: "<<graph->nodecount<<endl;
 //    cpnRG = graph;
 //    delete graph;
 //    delete cpnet;
+    if (1) {
+        cout << "build cpn, exit" << endl;
+        exit(0);
+    }
 }
 
 void CHECKLTL(bool cardinality) {
@@ -88,14 +93,14 @@ void CHECKLTL(bool cardinality) {
 
         if(cardinality) {
             if(syntaxTree.ParseXML(cc,propertyid,i)==CONSISTENCY_ERROR) {
-                cout << "FORMULA " << propertyid << " CANNOT_COMPUTE CONSISTENCY_ERROR"<<endl;
+                cout << "FORMULA " << propertyid << " CANNOT_COMPUTE"<<endl;
                 outresult << '?';
                 continue;
             }
         }
         else {
             if(syntaxTree.ParseXML(ff,propertyid,i)==CONSISTENCY_ERROR) {
-                cout << "FORMULA " << propertyid << " CANNOT_COMPUTE CONSISTENCY_ERROR"<<endl;
+                cout << "FORMULA " << propertyid << " CANNOT_COMPUTE"<<endl;
                 outresult << '?';
                 continue;
             }
@@ -126,6 +131,9 @@ void CHECKLTL(bool cardinality) {
         syntaxTree.Get_DNF(syntaxTree.root);
         syntaxTree.Build_VWAA();
         syntaxTree.VWAA_Simplify();
+        syntaxTree.getVisibleIterms();
+        NEXTFREE = syntaxTree.isNextFree(syntaxTree.root);
+        cpn->computeVis(syntaxTree.visibleIterms,cardinality);
 
         General GBA;
         GBA.Build_GBA(syntaxTree);
@@ -159,7 +167,7 @@ void CHECKLTL(bool cardinality) {
         CPN_Product_Automata *product = new CPN_Product_Automata(&SBA);
         each_used_time = product->ModelChecker(propertyid,each_run_time);
         endtime = get_time();
-        cout<<" RUNTIME:"<<endtime-starttime<<endl;
+        cout<<" "<<crg->nodecount<<" "<<endtime-starttime<<endl;
         int ret = product->getresult();
         outresult << (ret == -1 ? '?' : (ret == 0 ? 'F' : 'T'));
 
@@ -278,11 +286,12 @@ int main0(int argc, char* argv[]) {
 
 int main() {
     CHECKMEM();
-    cout << "=================================================" << endl;
-    cout << "=====This is our tool-EnPAC for the MCC'2021=====" << endl;
-    cout << "=================================================" << endl;
+//    cout << "=================================================" << endl;
+//    cout << "=====This is our tool-EnPAC for the MCC'2021=====" << endl;
+//    cout << "=================================================" << endl;
 
     CONSTRUCTCPN();
+
     CHECKLTL(1);
     CHECKLTL(0);
 

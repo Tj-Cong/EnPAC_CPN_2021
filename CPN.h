@@ -21,6 +21,7 @@ typedef struct CPN_Small_Arc
 
 typedef struct CPN_Place
 {
+    bool significant = false;
     string id;                  /*place id*/
     type tid;                   /*type(place): dot|usersort|productsort|finiteintrange*/
     SORTID sid;                 /*the index of type(place) in sorttable*/
@@ -37,6 +38,7 @@ typedef struct CPN_Transition
     string id;                   /*transition id*/
     condition_tree guard;        /*guard function*/
     bool hasguard;               /*hasguard=false => gurad is always evaluated to be true*/
+    bool significant = false;
     vector<CSArc> producer;
     vector<CSArc> consumer;
     vector<VARID> relvararray;   /*related variables*/
@@ -60,6 +62,7 @@ typedef struct CPN_Arc
 class CPN
 {
 public:
+    bool SLICE;
     CPlace *place;                      /*place table*/
     CTransition *transition;            /*transition table*/
     CArc *arc;                          /*arc table*/
@@ -111,7 +114,12 @@ public:
     /*print every tranition's related variable*/
     void printTransVar();
 
+    void computeVis(set<index_t> &visItems,bool cardinality);
+
+    void VISpread(set<index_t> &visTransitions);
     ~CPN();
+
+    bool utilizeSlice();
 };
 
 #endif //ENPAC_CPN_CPN_H

@@ -10,6 +10,7 @@
 #include "atomic.h"
 using namespace std;
 
+extern bool NEXTFREE;
 /*ROOT: root node of Syntax_Tree, non-sense
  * PREDICATE: propositions;
  * NEG: negation;
@@ -35,6 +36,7 @@ typedef struct STNode
     bool pure_univ;     //whether the subformula is pure universal, regarding the node as a root
     Evaluation groundtruth;
     string formula;     //the string of the subformula, regarding the node as a root
+    set<index_t> relPlaceOrTransition;
     vector<set<const STNode *>> DNF;
     vector<VWAA_delta> transitions;    //the transition set of this node, regarding it as a VWAA state
     STNode *nleft;      //leftnode
@@ -63,8 +65,8 @@ public:
     bool simplest;
     int UID;
 
-    //
     atomictable AT;
+    set<index_t> visibleIterms;
 public:
     Syntax_Tree();
     ~Syntax_Tree();
@@ -106,6 +108,9 @@ public:
 
     void Prune(STNode *curnode, STNode *predecessor);
 
+    void getVisibleIterms();
+    void getVisibleIterms(STNode *n);
+    bool isNextFree(STNode *n);
     /*VWAA operation*/
     int AssignUID();
     void Get_DNF(STNode *n);

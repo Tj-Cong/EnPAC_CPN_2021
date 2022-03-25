@@ -1,9 +1,9 @@
-cmake_minimum_required(VERSION 3.17)
+cmake_minimum_required(VERSION 3.16)
 project(EnPAC_CPN)
 
 set(CMAKE_CXX_STANDARD 14)
 set(LINK_DIR /usr/local/lib)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 -pthread")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O0 -pthread")
 
 link_directories(${LINK_DIR})
 link_libraries(tcmalloc)
