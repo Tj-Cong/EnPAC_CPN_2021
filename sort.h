@@ -82,7 +82,6 @@ public:
     SHORTNUM feconstnum;         /*the number of colors*/
     vector<string> members;      /*every colors' name*/
     map<string,COLORID> mapValue;  /*fast index structure of colors*/
-    fenqu
 };
 
 class FiniteIntRange:public Sort
