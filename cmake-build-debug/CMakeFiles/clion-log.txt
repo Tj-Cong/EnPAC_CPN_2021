@@ -1,4 +1,4 @@
-C:\Windows\system32\wsl.exe --distribution Ubuntu --exec /bin/sh -c "export CLION_IDE=TRUE && export JETBRAINS_IDE=TRUE && cd /mnt/d/ProjFiles/ClionProj/EnPAC-CPN/cmake-build-debug && /usr/bin/cmake -DCMAKE_BUILD_TYPE=Debug -G 'CodeBlocks - Unix Makefiles' /mnt/d/ProjFiles/ClionProj/EnPAC-CPN"
+/snap/clion/184/bin/cmake/linux/bin/cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_MAKE_PROGRAM=/snap/clion/184/bin/ninja/linux/ninja -G Ninja /home/leo/pdnet/project/EnPAC_CPN_2021
 -- Configuring done
 -- Generating done
--- Build files have been written to: /mnt/d/ProjFiles/ClionProj/EnPAC-CPN/cmake-build-debug
+-- Build files have been written to: /home/leo/pdnet/project/EnPAC_CPN_2021/cmake-build-debug
