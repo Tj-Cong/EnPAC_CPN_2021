@@ -560,7 +560,8 @@ index_t CPN::getTPosition(string str) {
 void CPN::SLICE(vector<string> criteria_p, vector<string> criteria_t) {
     slice_p.clear();
     slice_t.clear();
-    vector<string> tmp_p, tmp_t,result_p,result_t;//result_p、result_t未排序
+    vector<string> tmp_p, tmp_t;
+    vector<index_t> result_p,result_t;//result_p、result_t未排序
     for (auto i = criteria_p.begin(); i != criteria_p.end(); i++) {
         if (!exist_in(tmp_p, *i))
             tmp_p.push_back(*i);
@@ -573,14 +574,15 @@ void CPN::SLICE(vector<string> criteria_p, vector<string> criteria_t) {
     while(!tmp_p.empty() ||!tmp_t.empty()){
         //T′ ← T′∪•P′∪P′•;
         if(!tmp_p.empty()) {
-            CPlace &p = place[mapPlace.find(*tmp_p.begin())->second];
-            if(!exist_in(result_p,p.id))
-                result_p.push_back(p.id);
+            auto idx=mapPlace.find(*tmp_p.begin())->second;
+            CPlace &p = place[idx];
+            if(!exist_in(result_p,idx))
+                result_p.push_back(idx);
             auto p_pro = p.producer;
             if (!p_pro.empty()) {
                 for (auto ipre = p_pro.begin(); ipre != p_pro.end(); ipre++) {
                     CTransition &t_p_pre = transition[ipre->idx];
-                    if (!exist_in(result_t, t_p_pre.id)) {
+                    if (!exist_in(result_t, ipre->idx)) {
                         tmp_t.push_back(t_p_pre.id);
                     }
                 }
@@ -589,7 +591,7 @@ void CPN::SLICE(vector<string> criteria_p, vector<string> criteria_t) {
             if (!p_con.empty()) {
                 for (auto icon = p_con.begin(); icon != p_con.end(); icon++) {
                     CTransition &t_p_con = transition[icon->idx];
-                    if (!exist_in(result_t, t_p_con.id)) {
+                    if (!exist_in(result_t, icon->idx)) {
                         tmp_t.push_back(t_p_con.id);
                     }
                 }
@@ -598,14 +600,15 @@ void CPN::SLICE(vector<string> criteria_p, vector<string> criteria_t) {
         }
         // P′ ← P′∪•T′;
         if(!tmp_t.empty()) {
-            CTransition &t = transition[mapTransition.find(*tmp_t.begin())->second];
-            if(!exist_in(result_t,t.id))
-                result_t.push_back(t.id);
+            auto t_idx=mapTransition.find(*tmp_t.begin())->second;
+            CTransition &t = transition[t_idx];
+            if(!exist_in(result_t,t_idx))
+                result_t.push_back(t_idx);
             auto t_pre = t.producer;
             if (!t_pre.empty()) {
                 for (auto ipre = t_pre.begin(); ipre != t_pre.end(); ipre++) {
                     CPlace &p_t_pre = place[ipre->idx];
-                    if (!exist_in(result_p, p_t_pre.id)) {
+                    if (!exist_in(result_p, ipre->idx)) {
                         tmp_p.push_back(p_t_pre.id);
                     }
                 }
@@ -614,10 +617,10 @@ void CPN::SLICE(vector<string> criteria_p, vector<string> criteria_t) {
         }
     }
     int j=0;
-    for (auto i = 0; i < placecount; i++) {
+    for (unsigned int i = 0; i < placecount; i++) {
         CPlace &p = place[i];
-        if (exist_in(result_p, p.id)) {
-            slice_p.push_back(p.id);
+        if (exist_in(result_p, i)) {
+            slice_p.push_back(i);
             p.project_idx=j;
             j++;
         }
