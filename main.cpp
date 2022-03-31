@@ -169,17 +169,20 @@ void CHECKLTL(bool cardinality) {
         if(!next&&cpn->slice_t.size()/cpn->transitioncount<=0.8) {
             cpn->is_slice=true;
             for(auto i=0;i<cpn->slice_t.size();i++){
-                auto idx=cpn->mapTransition.find(cpn->slice_t[i])->second;
-                cpn->t_order.push_back(idx);
+                cpn->t_order=cpn->slice_t;
+//                auto idx=cpn->mapTransition.find(cpn->slice_t[i])->second;
+//                cpn->t_order.push_back(idx);
+
             }
         } else{
             cpn->is_slice= false;
             for(auto i=0;i<cpn->slice_t.size();i++){
-                auto idx=cpn->mapTransition.find(cpn->slice_t[i])->second;
-                cpn->t_order.push_back(idx);
+                cpn->t_order=cpn->slice_t;
+//                auto idx=cpn->mapTransition.find(cpn->slice_t[i])->second;
+//                cpn->t_order.push_back(idx);
             }
-            for(auto i=0;i<cpn->transitioncount;i++){
-                if(!exist_in(cpn->slice_t,cpn->transition[i].id))
+            for(unsigned int i=0;i<cpn->transitioncount;i++){
+                if(!exist_in(cpn->slice_t,i))
                     cpn->t_order.push_back(i);
             }
         }

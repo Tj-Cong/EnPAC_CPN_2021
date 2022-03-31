@@ -74,8 +74,8 @@ public:
     map<string,index_t> mapTransition;  /*Quick index structure of transitions bt transition's id*/
 
     //slice+
-    vector<string> slice_p;             /*切片库所*/
-    vector<string> slice_t;             /*切片变迁*/
+    vector<index_t> slice_p;             /*切片库所*/
+    vector<index_t> slice_t;             /*切片变迁*/
     vector<index_t> t_order;            /*变迁序*/
     bool is_slice;                      /*标识是否切片*/
     //slice-
