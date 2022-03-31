@@ -35,6 +35,6 @@ add_executable(EnPAC_CPN
         CPN_RG.h
         CPN_RG.cpp
         CPN_Product.h
-        CPN_Product.cpp)
+        CPN_Product.cpp criteria.cpp)
 
 target_link_libraries(EnPAC_CPN tcmalloc)

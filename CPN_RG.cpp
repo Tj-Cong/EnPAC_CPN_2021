@@ -212,18 +212,22 @@ bool BindingList::empty() {
 }
 
 CPN_RGNode::CPN_RGNode() {
-    marking = new Multiset[cpn->placecount];
+    int pcount=cpn->is_slice?cpn->slice_p.size():cpn->placecount;
+    marking = new Multiset[pcount];
     markingid = 0;
-    for(int i=0;i<cpn->placecount;++i) {
-        marking[i].initiate(cpn->place[i].tid,cpn->place[i].sid);
+    int j = 0;
+    for (auto i = 0; i <pcount; i++) {
+        int pid = cpn->is_slice?cpn->mapPlace.find(cpn->slice_p[i])->second:i;
+        //int pid = cpn->mapPlace.find(*i)->second;
+        marking[j].initiate(cpn->place[pid].tid, cpn->place[pid].sid);
+        j++;
     }
     next = NULL;
-    Binding_Available = new bool [cpn->transitioncount];
+    Binding_Available = new bool[cpn->transitioncount];
     enbindings = new BindingList[cpn->transitioncount];
-    for(SHORTIDX i=0;i<cpn->transitioncount;++i) {
+    for (SHORTIDX i = 0; i < cpn->transitioncount; ++i) {
         Binding_Available[i] = false;
     }
-
 }
 
 CPN_RGNode::~CPN_RGNode() {
@@ -235,8 +239,9 @@ CPN_RGNode::~CPN_RGNode() {
 
 index_t CPN_RGNode::Hash(SHORTNUM *weight) {
     index_t Hashvalue = 0;
-    for(int i=0;i<cpn->placecount;++i) {
-        if(marking[i].hashvalue == 0)
+    int pcount=cpn->is_slice?cpn->slice_p.size():cpn->placecount;
+    for (int i = 0; i < pcount; ++i) {
+        if (marking[i].hashvalue == 0)
             marking[i].Hash();
         Hashvalue += weight[i] * marking[i].hashvalue;
     }
@@ -245,21 +250,29 @@ index_t CPN_RGNode::Hash(SHORTNUM *weight) {
 
 void CPN_RGNode::printMarking() {
     cout<<"[M"<<markingid<<"]"<<endl;
-    for(int i=0;i<cpn->placecount;++i)
-    {
-        cout<<setiosflags(ios::left)<<setw(15)<<cpn->place[i].id<<":";
-        this->marking[i].printToken();
+    if (cpn->is_slice) {
+        for (auto i = cpn->slice_p.begin(); i != cpn->slice_p.end(); i++) {
+            CPlace &p = cpn->place[cpn->mapPlace.find(*i)->second];
+            cout << setiosflags(ios::left) << setw(15) << *i << ":";
+            this->marking[p.project_idx].printToken();
+        }
+    } else {
+        for (int i = 0; i < cpn->placecount; ++i) {
+            cout << setiosflags(ios::left) << setw(15) << cpn->place[i].id << ":";
+            this->marking[i].printToken();
+        }
     }
     /*print fireable bindings*/
-    for(int i=cpn->transitioncount-1;i>=0;--i) {
-        binding *p = enbindings[i].listhead;
+    for (int i = cpn->t_order.size() - 1; i >= 0; --i) {
+        int idx = cpn->t_order[i];
+        binding *p = enbindings[idx].listhead;
         while (p) {
-            cout<<"{";
-            cout<<cpn->transition[i].id<<",";
+            cout << "{";
+            cout << cpn->transition[idx].id << ",";
             string bind;
             p->printBinding(bind);
-            cout<<bind<<"}"<<endl;
-            p=p->next;
+            cout << bind << "}" << endl;
+            p = p->next;
         }
     }
     cout<<"----------------------------------------"<<endl;
@@ -267,63 +280,59 @@ void CPN_RGNode::printMarking() {
 
 bool CPN_RGNode::operator==(const CPN_RGNode &state) {
     bool equal = true;
-    for(int i=0;i<cpn->placecount;++i) {
+    int pcount = cpn->is_slice ? cpn->slice_p.size() : cpn->placecount;
+    for (auto i = 0; i < pcount; ++i) {
         //检查库所i的tokenmetacount是否一样
-        SHORTNUM tmc = this->marking[i].colorcount;
-        if(tmc != state.marking[i].colorcount)
-        {
+        int idx = cpn->is_slice ? cpn->place[cpn->mapPlace.find(cpn->slice_p[i])->second].project_idx : i;
+        SHORTNUM tmc = this->marking[idx].colorcount;
+        if (tmc != state.marking[idx].colorcount) {
             equal = false;
             break;
         }
 
         //检查每一个tokenmeta是否一样
-        Tokens *t1=this->marking[i].tokenQ->next;
-        Tokens *t2=state.marking[i].tokenQ->next;
-        for(t1,t2; t1!=NULL && t2!=NULL; t1=t1->next,t2=t2->next)
-        {
+        Tokens *t1 = this->marking[idx].tokenQ->next;
+        Tokens *t2 = state.marking[idx].tokenQ->next;
+        for (t1, t2; t1 != NULL && t2 != NULL; t1 = t1->next, t2 = t2->next) {
             //先检查tokencount
-            if(t1->tokencount!=t2->tokencount)
-            {
+            if (t1->tokencount != t2->tokencount) {
                 equal = false;
                 break;
             }
 
             //检查color
-            type tid = cpn->place[i].tid;
-            if(tid == dot) {
+            type tid = cpn->is_slice ? cpn->place[cpn->mapPlace.find(cpn->slice_p[i])->second].tid : cpn->place[i].tid;
+            if (tid == dot) {
                 continue;
-            }
-            else if(tid == usersort || tid == finiteintrange){
-                COLORID cid1,cid2;
+            } else if (tid == usersort || tid == finiteintrange) {
+                COLORID cid1, cid2;
                 t1->tokenvalue->getColor(cid1);
                 t2->tokenvalue->getColor(cid2);
-                if(cid1!=cid2) {
+                if (cid1 != cid2) {
                     equal = false;
                     break;
                 }
-            }
-            else if(tid == productsort){
-                COLORID *cid1,*cid2;
-                SORTID sid = cpn->place[i].sid;
+            } else if (tid == productsort) {
+                COLORID *cid1, *cid2;
+                SORTID sid = cpn->is_slice ? cpn->place[cpn->mapPlace.find(cpn->slice_p[i])->second].sid
+                                           : cpn->place[i].sid;
                 int sortnum = SortTable::productsort[sid].sortnum;
                 cid1 = new COLORID[sortnum];
                 cid2 = new COLORID[sortnum];
-                t1->tokenvalue->getColor(cid1,sortnum);
-                t2->tokenvalue->getColor(cid2,sortnum);
-                for(int k=0;k<sortnum;++k)
-                {
-                    if(cid1[k]!=cid2[k])
-                    {
+                t1->tokenvalue->getColor(cid1, sortnum);
+                t2->tokenvalue->getColor(cid2, sortnum);
+                for (int k = 0; k < sortnum; ++k) {
+                    if (cid1[k] != cid2[k]) {
                         equal = false;
-                        delete [] cid1;
-                        delete [] cid2;
+                        delete[] cid1;
+                        delete[] cid2;
                         break;
                     }
                 }
-                if(equal==false)
+                if (equal == false)
                     break;
-                delete [] cid1;
-                delete [] cid2;
+                delete[] cid1;
+                delete[] cid2;
             }
         }
         if(equal == false)
@@ -333,11 +342,11 @@ bool CPN_RGNode::operator==(const CPN_RGNode &state) {
 }
 
 void CPN_RGNode::operator=(const CPN_RGNode &state) {
-    int i;
-    for(i=0;i<cpn->placecount;++i)
-    {
-        const Multiset &placemark = state.marking[i];
-        MultisetCopy(this->marking[i],placemark,placemark.tid,placemark.sid);
+    int pcount = cpn->is_slice ? cpn->slice_p.size() : cpn->placecount;
+    for (int i = 0; i < pcount; ++i) {
+        int idx = cpn->is_slice ? cpn->place[cpn->mapPlace.find(cpn->slice_p[i])->second].project_idx : i;
+        const Multiset &placemark = state.marking[idx];
+        MultisetCopy(this->marking[idx], placemark, placemark.tid, placemark.sid);
     }
 }
 
@@ -359,6 +368,11 @@ void CPN_RGNode::tran_FireableBindings(SHORTIDX tranid) {
     /*Notice: when in the parallel environment, this clause is dangerous*/
     Binding_Available[tranid] = true;
 
+    //slice?
+    if(cpn->is_slice)
+        if(!exist_in(cpn->slice_t,cpn->transition[tranid].id))
+            return;
+
     CPN_Transition &tran = cpn->transition[tranid];
     BindingList *bindingList = new BindingList[tran.producer.size()];
 
@@ -366,18 +380,22 @@ void CPN_RGNode::tran_FireableBindings(SHORTIDX tranid) {
     binding *p = new binding;
     initlist.insert(p);
 
-    if(tran.producer[0].arc_exp.get_IBS(marking[tran.producer[0].idx],initlist,bindingList[0])!=SUCCESS) {
-        delete [] bindingList;
+    int idx = cpn->is_slice ? cpn->place[tran.producer[0].idx].project_idx : tran.producer[0].idx;
+    if (tran.producer[0].arc_exp.get_IBS(marking[idx], initlist,
+                                         bindingList[0]) != SUCCESS) {
+        delete[] bindingList;
         return;
     }
 
-    for(int i=1;i<tran.producer.size();++i) {
-        if(tran.producer[i].arc_exp.get_IBS(marking[tran.producer[i].idx],bindingList[i-1],bindingList[i])!=SUCCESS) {
-            delete [] bindingList;
+    for (int i = 1; i < tran.producer.size(); ++i) {
+        idx = cpn->is_slice ? cpn->place[tran.producer[i].idx].project_idx : tran.producer[i].idx;
+        if (tran.producer[i].arc_exp.get_IBS(marking[idx], bindingList[i - 1],
+                                             bindingList[i]) != SUCCESS) {
+            delete[] bindingList;
             return;
         }
-        if(ready2exit) {
-            delete [] bindingList;
+        if (ready2exit) {
+            delete[] bindingList;
             return;
         }
     }
@@ -471,15 +489,17 @@ void CPN_RGNode::complete(const vector<VARID> unassignedvar,int level,binding *i
 }
 
 bool CPN_RGNode::isfirable(string transname) {
-    map<string,index_t>::iterator finditer;
+    if (cpn->is_slice)
+        if (!exist_in(cpn->slice_t, transname))
+            return false;
+    map<string, index_t>::iterator finditer;
     finditer = cpn->mapTransition.find(transname);
-    if(finditer!=cpn->mapTransition.end()) {
-        while(!Binding_Available[finditer->second]) {
+    if (finditer != cpn->mapTransition.end()) {
+        while (!Binding_Available[finditer->second]) {
             tran_FireableBindings(finditer->second);
         }
         return !enbindings[finditer->second].empty();
-    }
-    else {
+    } else {
         consistency = false;
 //        cerr<<"[ERROR @ CPN_RGNode::isfirable] can not find transition \""<<transname<<"\"."<<endl;
 //        exit(-1);
@@ -487,7 +507,11 @@ bool CPN_RGNode::isfirable(string transname) {
 }
 
 bool CPN_RGNode::isfirable(index_t argtranid) {
-    while(!Binding_Available[argtranid]) {
+    if (cpn->is_slice) {
+        if (!exist_in(cpn->slice_t, cpn->transition[argtranid].id))
+            return false;
+    }
+    while (!Binding_Available[argtranid]) {
         tran_FireableBindings(argtranid);
     }
     return !enbindings[argtranid].empty();
@@ -502,7 +526,8 @@ bool CPN_RGNode::deadmark() {
 }
 
 NUM_t CPN_RGNode::readPlace(index_t placeid) {
-    return marking[placeid].Tokensum();
+    int idx = cpn->is_slice ? cpn->place[placeid].project_idx : placeid;
+    return marking[idx].Tokensum();
 }
 
 CPN_RG::CPN_RG(atomictable &argAT) : AT(argAT) {
@@ -514,11 +539,12 @@ CPN_RG::CPN_RG(atomictable &argAT) : AT(argAT) {
     nodecount = 0;
     hash_conflict_times = 0;
 
-    weight = new SHORTNUM[cpn->placecount];
-    srand((int)time(NULL));
-    for(int j=0;j<cpn->placecount;++j)
-    {
-        weight[j] = random(133)+1;
+    //slice?
+    int pcount = cpn->is_slice ? cpn->slice_p.size() : cpn->placecount;
+    weight = new SHORTNUM[pcount];
+    srand((int) time(NULL));
+    for (int j = 0; j < pcount; ++j) {
+        weight[j] = random(133) + 1;
     }
 }
 
@@ -560,11 +586,12 @@ void CPN_RG::addRGNode(CPN_RGNode *state) {
 CPN_RGNode *CPN_RG::CPNRGinitnode() {
     initnode = new CPN_RGNode;
     //遍历每一个库所
-    for(int i=0;i<cpn->placecount;++i)
-    {
-        CPlace &pp = cpn->place[i];
-        MultisetCopy(initnode->marking[i],pp.initM,pp.tid,pp.sid);
-        initnode->marking[i].Hash();
+    int pcount = cpn->is_slice ? cpn->slice_p.size() : cpn->placecount;
+    for (int i = 0; i < pcount; ++i) {
+        CPlace &pp = cpn->is_slice ? cpn->place[cpn->mapPlace.find(cpn->slice_p[i])->second] : cpn->place[i];
+        int idx=cpn->is_slice?pp.project_idx:i;
+        MultisetCopy(initnode->marking[idx], pp.initM, pp.tid, pp.sid);
+        initnode->marking[idx].Hash();
     }
 
 //    initnode->all_FireableBindings();
@@ -604,6 +631,10 @@ void CPN_RG::Generate() {
 
 void CPN_RG::Generate(CPN_RGNode *state) {
     for(int i=cpn->transitioncount-1;i>=0;--i) {
+        //slice?
+        if(!exist_in(cpn->slice_t,cpn->transition[i].id))
+            continue;
+
         binding *p = state->enbindings[i].listhead;
         bool exist = false;
         while (p) {
@@ -631,18 +662,34 @@ CPN_RGNode *CPN_RG::RGNode_Child(CPN_RGNode *curstate, binding *bind, SHORTIDX t
 
     for(front=tran.producer.begin();front!=tran.producer.end();++front) {
         Multiset arcms;
-        front->arc_exp.to_Multiset(arcms,bind->vararray);
-        MINUS(child->marking[front->idx],arcms);
+        if(cpn->is_slice) {
+            CPlace &p_pro = cpn->place[front->idx];
+            if (exist_in(cpn->slice_p, p_pro.id)) {
+                front->arc_exp.to_Multiset(arcms, bind->vararray);
+                MINUS(child->marking[p_pro.project_idx], arcms);
+            }
+        }else{
+            front->arc_exp.to_Multiset(arcms,bind->vararray);
+            MINUS(child->marking[front->idx],arcms);
+        }
     }
 
     vector<CSArc>::iterator rear;
     for(rear=tran.consumer.begin();rear!=tran.consumer.end();++rear) {
         Multiset arcms;
-        rear->arc_exp.to_Multiset(arcms,bind->vararray);
-        PLUS(child->marking[rear->idx],arcms);
+        if(cpn->is_slice) {
+            CPlace &p_con = cpn->place[rear->idx];
+            if (exist_in(cpn->slice_p, p_con.id)) {//只有重要库所才继续
+                rear->arc_exp.to_Multiset(arcms, bind->vararray);
+                PLUS(child->marking[p_con.project_idx], arcms);
+            }
+        }else{
+            rear->arc_exp.to_Multiset(arcms,bind->vararray);
+            PLUS(child->marking[rear->idx],arcms);
+        }
     }
-
-    for(int i=0;i<cpn->placecount;++i) {
+    int pcount=cpn->is_slice?cpn->slice_p.size():cpn->placecount;
+    for (auto i = 0; i < pcount; i++) {
         child->marking[i].Hash();
     }
 

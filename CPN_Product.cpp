@@ -21,7 +21,7 @@ ProductState::ProductState() {
 }
 
 void ProductState::getNextRGChild(bool &exist) {
-    if(fireinfo.tranid >= cpn->transitioncount) {
+    if(fireinfo.t_order_idx >= cpn->t_order.size()) {
         cur_RGchild = NULL;
         return;
     }
@@ -75,19 +75,14 @@ int ProductState::NEXTBINDING() {
 }
 
 int ProductState::NEXTTRANSITION() {
-    if(fireinfo.tranid>=cpn->transitioncount)
+    if(fireinfo.t_order_idx>=cpn->t_order.size())
         return FAIL;
-    if(NEXTFREE) {
-        do{
-            fireinfo.tranid++;
-        } while(!cpn->transition[fireinfo.tranid].significant && fireinfo.tranid<cpn->transitioncount);
-    }
-    else {
-        fireinfo.tranid++;
-    }
+    fireinfo.t_order_idx++;
     fireinfo.virgin = true;
-    if(fireinfo.tranid>=cpn->transitioncount)
+    if(fireinfo.t_order_idx>=cpn->t_order.size()) {
         return FAIL;
+    }
+    fireinfo.tranid=cpn->t_order[fireinfo.t_order_idx];
     return SUCCESS;
 }
 
@@ -584,7 +579,12 @@ NUM_t CPN_Product_Automata::sumtoken(string s, CPN_RGNode *state) {
             consistency = false;
             return 0;
         }
-        sum += state->marking[piter->second].Tokensum();
+        if(cpn->is_slice) {
+            CPlace &p = cpn->place[piter->second];
+            sum += state->marking[p.project_idx].Tokensum();
+        }else{
+            sum += state->marking[piter->second].Tokensum();
+        }
         s=s.substr(pos+1,s.length()-pos);
     }
     return sum;
@@ -851,19 +851,18 @@ unsigned short CPN_Product_Automata::ModelChecker(string propertyid, unsigned sh
     getProduct();
 
     string re;
-    string slice = cpn->utilizeSlice() && NEXTFREE?"SLICE":"";
     if(timeflag && memory_flag && stack_flag && consistency)
     {
         if(result)
         {
             re="TRUE";
-            cout << "FORMULA " << propertyid << " " << re <<" "+slice;
+            cout << "FORMULA " << propertyid << " " << re;
             ret = 1;
         }
         else
         {
             re="FALSE";
-            cout << "FORMULA " << propertyid + " " << re <<" "+slice;
+            cout << "FORMULA " << propertyid + " " << re;
             ret = 0;
         }
     }
