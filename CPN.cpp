@@ -558,13 +558,13 @@ index_t CPN::getTPosition(string str) {
 }
 
 int CPN::SLICE(vector<string> criteria_p, vector<string> criteria_t) {
-    int size=0;
-    slice_p.clear();
-    //slice_t.clear();
+    int t_size=0;
+    cpn->slice_p_count=0;
+    for(auto i=0;i<cpn->placecount;i++)
+        cpn->place[i].significant= false;
     for(auto i=0;i<cpn->transitioncount;i++)
         cpn->transition[i].significant= false;
     vector<string> tmp_p, tmp_t;
-    vector<index_t> result_p;
     for (auto i = criteria_p.begin(); i != criteria_p.end(); i++) {
         if (!exist_in(tmp_p, *i))
             tmp_p.push_back(*i);
@@ -579,8 +579,10 @@ int CPN::SLICE(vector<string> criteria_p, vector<string> criteria_t) {
         if(!tmp_p.empty()) {
             auto idx=mapPlace.find(*tmp_p.begin())->second;
             CPlace &p = place[idx];
-            if(!exist_in(result_p,idx))
-                result_p.push_back(idx);
+            if(!p.significant) {
+                p.significant = true;
+                cpn->slice_p_count++;
+            }
             auto p_pro = p.producer;
             if (!p_pro.empty()) {
                 for (auto ipre = p_pro.begin(); ipre != p_pro.end(); ipre++) {
@@ -605,13 +607,13 @@ int CPN::SLICE(vector<string> criteria_p, vector<string> criteria_t) {
             CTransition &t = transition[t_idx];
             if(!t.significant) {
                 t.significant = true;
-                ++size;
+                ++t_size;
             }
             auto t_pre = t.producer;
             if (!t_pre.empty()) {
                 for (auto ipre = t_pre.begin(); ipre != t_pre.end(); ipre++) {
                     CPlace &p_t_pre = place[ipre->idx];
-                    if (!exist_in(result_p, ipre->idx)) {
+                    if (!p_t_pre.significant) {
                         tmp_p.push_back(p_t_pre.id);
                     }
                 }
@@ -622,13 +624,12 @@ int CPN::SLICE(vector<string> criteria_p, vector<string> criteria_t) {
     int j=0;
     for (unsigned int i = 0; i < placecount; i++) {
         CPlace &p = place[i];
-        if (exist_in(result_p, i)) {
-            slice_p.push_back(i);
+        if (p.significant) {
             p.project_idx=j;
             j++;
         }
     }
-    return size;
+    return t_size;
 }
 //void CPN::computeVis(set<index_t> &visItems, bool cardinality) {
 //    for(int i=0;i<transitioncount;i++)

@@ -21,7 +21,6 @@ typedef struct CPN_Small_Arc
 
 typedef struct CPN_Place
 {
-    bool significant = false;
     string id;                  /*place id*/
     type tid;                   /*type(place): dot|usersort|productsort|finiteintrange*/
     SORTID sid;                 /*the index of type(place) in sorttable*/
@@ -32,6 +31,7 @@ typedef struct CPN_Place
     hlinitialmarking *init_exp;    /*initial marking*/
     Multiset initM;             /*initial marking*/
     vector<unsigned char> atomicLinks; //库所关联原子命题序列
+    bool significant = false;
 } CPlace;
 
 typedef struct CPN_Transition
@@ -74,9 +74,10 @@ public:
     map<string,index_t> mapTransition;  /*Quick index structure of transitions bt transition's id*/
 
     //slice+
-    vector<index_t> slice_p;             /*切片库所*/
+    //vector<index_t> slice_p;             /*切片库所*/
     //vector<index_t> slice_t;             /*切片变迁*/
     //vector<index_t> t_order;            /*t_order与cpn_transition的顺序一样，并未使用变迁序，用于切片时跳过非切片变迁*/
+    index_t slice_p_count;              /*重要库所总数*/
     bool is_slice;                      /*标识是否切片*/
     //slice-
     CPN();

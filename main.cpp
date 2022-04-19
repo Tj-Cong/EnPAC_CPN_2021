@@ -166,17 +166,10 @@ void CHECKLTL(bool cardinality) {
         //slicing CPN
         int slice_t_size=cpn->SLICE(criteria_p,criteria_t);
 
-        if(!next&&slice_t_size/cpn->transitioncount<=0.8) {
+        if(!next && slice_t_size/cpn->transitioncount<=0.8) {
             cpn->is_slice=true;
-//            for(unsigned int i=0;i<cpn->transitioncount;i++){
-//                if(exist_in(cpn->slice_t,i))
-//                    cpn->t_order.push_back(i);//t_order与cpn_transition的顺序一样，并未使用变迁序
-//            }
         } else{
             cpn->is_slice= false;
-//            for(unsigned int i=0;i<cpn->transitioncount;i++){
-//                    cpn->t_order.push_back(i);
-//            }
         }
         ready2exit = false;
         consistency = true;
