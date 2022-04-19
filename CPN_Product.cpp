@@ -21,7 +21,7 @@ ProductState::ProductState() {
 }
 
 void ProductState::getNextRGChild(bool &exist) {
-    if(fireinfo.t_order_idx >= cpn->t_order.size()) {
+    if(fireinfo.tranid >= cpn->transitioncount) {
         cur_RGchild = NULL;
         return;
     }
@@ -75,14 +75,19 @@ int ProductState::NEXTBINDING() {
 }
 
 int ProductState::NEXTTRANSITION() {
-    if(fireinfo.t_order_idx>=cpn->t_order.size())
+    if(fireinfo.tranid>=cpn->transitioncount)
         return FAIL;
-    fireinfo.t_order_idx++;
-    fireinfo.virgin = true;
-    if(fireinfo.t_order_idx>=cpn->t_order.size()) {
-        return FAIL;
+    fireinfo.tranid++;
+    if(cpn->is_slice){
+        while (!cpn->transition[fireinfo.tranid].significant) {
+            fireinfo.tranid++;
+            if(fireinfo.tranid>=cpn->transitioncount)
+                return FAIL;
+        }
     }
-    fireinfo.tranid=cpn->t_order[fireinfo.t_order_idx];
+    fireinfo.virgin = true;
+    if(fireinfo.tranid>=cpn->transitioncount)
+        return FAIL;
     return SUCCESS;
 }
 
