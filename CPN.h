@@ -26,6 +26,7 @@ typedef struct CPN_Place
     type tid;                   /*type(place): dot|usersort|productsort|finiteintrange*/
     SORTID sid;                 /*the index of type(place) in sorttable*/
     SHORTIDX metacount=0;
+    index_t project_idx;        /*库所映射到marking的idx，用于切片算法*/
     vector<CSArc> producer;
     vector<CSArc> consumer;
     hlinitialmarking *init_exp;    /*initial marking*/
@@ -38,7 +39,7 @@ typedef struct CPN_Transition
     string id;                   /*transition id*/
     condition_tree guard;        /*guard function*/
     bool hasguard;               /*hasguard=false => gurad is always evaluated to be true*/
-    bool significant = false;
+    //bool significant = false;
     vector<CSArc> producer;
     vector<CSArc> consumer;
     vector<VARID> relvararray;   /*related variables*/
@@ -62,7 +63,6 @@ typedef struct CPN_Arc
 class CPN
 {
 public:
-    bool SLICE;
     CPlace *place;                      /*place table*/
     CTransition *transition;            /*transition table*/
     CArc *arc;                          /*arc table*/
@@ -73,6 +73,12 @@ public:
     map<string,index_t> mapPlace;       /*Quick index structure of places by place's id*/
     map<string,index_t> mapTransition;  /*Quick index structure of transitions bt transition's id*/
 
+    //slice+
+    vector<index_t> slice_p;             /*切片库所*/
+    vector<index_t> slice_t;             /*切片变迁*/
+    vector<index_t> t_order;            /*t_order与cpn_transition的顺序一样，并未使用变迁序，用于切片时跳过非切片变迁*/
+    bool is_slice;                      /*标识是否切片*/
+    //slice-
     CPN();
 
     /*This function is to first scan the pnml file and do these things:
@@ -114,12 +120,13 @@ public:
     /*print every tranition's related variable*/
     void printTransVar();
 
-    void computeVis(set<index_t> &visItems,bool cardinality);
-
-    void VISpread(set<index_t> &visTransitions);
+    void SLICE(vector<string> criteria_p,vector<string> criteria_t);
+//    void computeVis(set<index_t> &visItems,bool cardinality);
+//
+//    void VISpread(set<index_t> &visTransitions);
     ~CPN();
 
-    bool utilizeSlice();
+//    bool utilizeSlice();
 };
 
 #endif //ENPAC_CPN_CPN_H

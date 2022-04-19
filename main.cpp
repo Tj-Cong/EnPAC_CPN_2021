@@ -16,6 +16,7 @@ short int total_swap;
 pid_t mypid;
 
 size_t  heap_malloc_total, heap_free_total,mmap_total, mmap_count;
+extern void extract_criteria(STNode *n,atomictable &AT, vector<string> &criteria_p,vector<string> &criteria_t,bool &next);
 void CreateBA(StateBuchi &ba);
 void print_info() {
     struct mallinfo mi = mallinfo();
@@ -61,10 +62,10 @@ void CONSTRUCTCPN() {
 //    cpnRG = graph;
 //    delete graph;
 //    delete cpnet;
-    if (1) {
-        cout << "build cpn, exit" << endl;
-        exit(0);
-    }
+//    if (1) {
+//        cout << "build cpn, exit" << endl;
+//        exit(0);
+//    }
 }
 
 void CHECKLTL(bool cardinality) {
@@ -131,9 +132,9 @@ void CHECKLTL(bool cardinality) {
         syntaxTree.Get_DNF(syntaxTree.root);
         syntaxTree.Build_VWAA();
         syntaxTree.VWAA_Simplify();
-        syntaxTree.getVisibleIterms();
-        NEXTFREE = syntaxTree.isNextFree(syntaxTree.root);
-        cpn->computeVis(syntaxTree.visibleIterms,cardinality);
+//        syntaxTree.getVisibleIterms();
+//        NEXTFREE = syntaxTree.isNextFree(syntaxTree.root);
+//        cpn->computeVis(syntaxTree.visibleIterms,cardinality);
 
         General GBA;
         GBA.Build_GBA(syntaxTree);
@@ -158,6 +159,25 @@ void CHECKLTL(bool cardinality) {
 //        SBA.PrintStateBuchi();
         SBA.linkAtomics(syntaxTree.AT);
 
+        //extract criteria from syntaxtree
+        vector<string> criteria_p,criteria_t;
+        bool next= false;
+        extract_criteria(syntaxTree.root,syntaxTree.AT,criteria_p,criteria_t,next);
+        //slicing CPN
+        cpn->SLICE(criteria_p,criteria_t);
+
+        if(!next&&cpn->slice_t.size()/cpn->transitioncount<=0.8) {
+            cpn->is_slice=true;
+            for(unsigned int i=0;i<cpn->transitioncount;i++){
+                if(exist_in(cpn->slice_t,i))
+                    cpn->t_order.push_back(i);//t_order与cpn_transition的顺序一样，并未使用变迁序
+            }
+        } else{
+            cpn->is_slice= false;
+            for(unsigned int i=0;i<cpn->transitioncount;i++){
+                    cpn->t_order.push_back(i);
+            }
+        }
         ready2exit = false;
         consistency = true;
         crg = new CPN_RG(syntaxTree.AT);
@@ -167,7 +187,11 @@ void CHECKLTL(bool cardinality) {
         CPN_Product_Automata *product = new CPN_Product_Automata(&SBA);
         each_used_time = product->ModelChecker(propertyid,each_run_time);
         endtime = get_time();
-        cout<<" "<<crg->nodecount<<" "<<endtime-starttime<<endl;
+        cout<<" "<<crg->nodecount<<" "<<endtime-starttime;
+        if(cpn->is_slice)
+            cout<<" SLICE"<<endl;
+        else
+            cout<<endl;
         int ret = product->getresult();
         outresult << (ret == -1 ? '?' : (ret == 0 ? 'F' : 'T'));
 

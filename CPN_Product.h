@@ -25,7 +25,8 @@ extern pid_t mypid;
 
 typedef struct last_firing_info {
     bool virgin = true;
-    SHORTIDX tranid = 0;
+    SHORTIDX tranid = cpn->t_order[0];
+    SHORTIDX t_order_idx=0;
     binding *fireBinding = NULL;
 } LFI;
 

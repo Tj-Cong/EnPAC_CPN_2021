@@ -557,65 +557,135 @@ index_t CPN::getTPosition(string str) {
     }
 }
 
-void CPN::computeVis(set<index_t> &visItems, bool cardinality) {
-    for(int i=0;i<transitioncount;i++)
-        transition[i].significant = false;
-    for(int i=0;i<placecount;i++)
-        place[i].significant = false;
-
-    set<index_t> visTransitions;
-    if(cardinality) {
-        set<index_t>::iterator iter;
-        for(iter=visItems.begin();iter!=visItems.end();iter++) {
-            CPN_Place &pp = place[*iter];
-            pp.significant = true;
-            for(int i=0;i<pp.producer.size();i++) {
-                visTransitions.insert(pp.producer[i].idx);
-            }
-            for(int i=0;i<pp.consumer.size();i++) {
-                visTransitions.insert(pp.consumer[i].idx);
-            }
-        }
+void CPN::SLICE(vector<string> criteria_p, vector<string> criteria_t) {
+    slice_p.clear();
+    slice_t.clear();
+    vector<string> tmp_p, tmp_t;
+    vector<index_t> result_p,result_t;//result_p、result_t未排序
+    for (auto i = criteria_p.begin(); i != criteria_p.end(); i++) {
+        if (!exist_in(tmp_p, *i))
+            tmp_p.push_back(*i);
     }
-    else {
-        visTransitions = visItems;
+    for (auto i = criteria_t.begin(); i != criteria_t.end(); i++) {
+        if (!exist_in(tmp_t, *i))
+            tmp_t.push_back(*i);
     }
-    VISpread(visTransitions);
-}
 
-void CPN::VISpread(set<index_t> &visTransitions) {
-    set<index_t> unexpanded;
-    unexpanded = visTransitions;
-    while (!unexpanded.empty()) {
-        index_t idxT = *unexpanded.begin();
-        unexpanded.erase(unexpanded.begin());
-        CPN_Transition &expandTran = transition[idxT];
-        expandTran.significant = true;
-        vector<CSArc>::iterator sarcP;
-        for(sarcP=expandTran.producer.begin();sarcP!=expandTran.producer.end();sarcP++) {
-            CPN_Place &pp = place[sarcP->idx];
-            pp.significant = true;
-            vector<CSArc>::iterator sarcT;
-            for(sarcT=pp.producer.begin();sarcT!=pp.producer.end();sarcT++) {
-                if(!transition[sarcT->idx].significant) {
-                    transition[sarcT->idx].significant = true;
-                    unexpanded.insert(sarcT->idx);
+    while(!tmp_p.empty() ||!tmp_t.empty()){
+        //T′ ← T′∪•P′∪P′•;
+        if(!tmp_p.empty()) {
+            auto idx=mapPlace.find(*tmp_p.begin())->second;
+            CPlace &p = place[idx];
+            if(!exist_in(result_p,idx))
+                result_p.push_back(idx);
+            auto p_pro = p.producer;
+            if (!p_pro.empty()) {
+                for (auto ipre = p_pro.begin(); ipre != p_pro.end(); ipre++) {
+                    CTransition &t_p_pre = transition[ipre->idx];
+                    if (!exist_in(result_t, ipre->idx)) {
+                        tmp_t.push_back(t_p_pre.id);
+                    }
                 }
             }
-            for(sarcT=pp.consumer.begin();sarcT!=pp.consumer.end();sarcT++) {
-                if(!transition[sarcT->idx].significant) {
-                    transition[sarcT->idx].significant = true;
-                    unexpanded.insert(sarcT->idx);
+            auto p_con = p.consumer;
+            if (!p_con.empty()) {
+                for (auto icon = p_con.begin(); icon != p_con.end(); icon++) {
+                    CTransition &t_p_con = transition[icon->idx];
+                    if (!exist_in(result_t, icon->idx)) {
+                        tmp_t.push_back(t_p_con.id);
+                    }
                 }
             }
+            tmp_p.erase(tmp_p.begin());
+        }
+        // P′ ← P′∪•T′;
+        if(!tmp_t.empty()) {
+            auto t_idx=mapTransition.find(*tmp_t.begin())->second;
+            CTransition &t = transition[t_idx];
+            if(!exist_in(result_t,t_idx))
+                result_t.push_back(t_idx);
+            auto t_pre = t.producer;
+            if (!t_pre.empty()) {
+                for (auto ipre = t_pre.begin(); ipre != t_pre.end(); ipre++) {
+                    CPlace &p_t_pre = place[ipre->idx];
+                    if (!exist_in(result_p, ipre->idx)) {
+                        tmp_p.push_back(p_t_pre.id);
+                    }
+                }
+            }
+            tmp_t.erase(tmp_t.begin());
         }
     }
-}
-
-bool CPN::utilizeSlice() {
-    for(int i=0;i<transitioncount;i++) {
-        if(!transition[i].significant)
-            return true;
+    int j=0;
+    for (unsigned int i = 0; i < placecount; i++) {
+        CPlace &p = place[i];
+        if (exist_in(result_p, i)) {
+            slice_p.push_back(i);
+            p.project_idx=j;
+            j++;
+        }
     }
-    return false;
+    slice_t=result_t;
 }
+//void CPN::computeVis(set<index_t> &visItems, bool cardinality) {
+//    for(int i=0;i<transitioncount;i++)
+//        transition[i].significant = false;
+//    for(int i=0;i<placecount;i++)
+//        place[i].significant = false;
+//
+//    set<index_t> visTransitions;
+//    if(cardinality) {
+//        set<index_t>::iterator iter;
+//        for(iter=visItems.begin();iter!=visItems.end();iter++) {
+//            CPN_Place &pp = place[*iter];
+//            pp.significant = true;
+//            for(int i=0;i<pp.producer.size();i++) {
+//                visTransitions.insert(pp.producer[i].idx);
+//            }
+//            for(int i=0;i<pp.consumer.size();i++) {
+//                visTransitions.insert(pp.consumer[i].idx);
+//            }
+//        }
+//    }
+//    else {
+//        visTransitions = visItems;
+//    }
+//    VISpread(visTransitions);
+//}
+
+//void CPN::VISpread(set<index_t> &visTransitions) {
+//    set<index_t> unexpanded;
+//    unexpanded = visTransitions;
+//    while (!unexpanded.empty()) {
+//        index_t idxT = *unexpanded.begin();
+//        unexpanded.erase(unexpanded.begin());
+//        CPN_Transition &expandTran = transition[idxT];
+//        expandTran.significant = true;
+//        vector<CSArc>::iterator sarcP;
+//        for(sarcP=expandTran.producer.begin();sarcP!=expandTran.producer.end();sarcP++) {
+//            CPN_Place &pp = place[sarcP->idx];
+//            pp.significant = true;
+//            vector<CSArc>::iterator sarcT;
+//            for(sarcT=pp.producer.begin();sarcT!=pp.producer.end();sarcT++) {
+//                if(!transition[sarcT->idx].significant) {
+//                    transition[sarcT->idx].significant = true;
+//                    unexpanded.insert(sarcT->idx);
+//                }
+//            }
+//            for(sarcT=pp.consumer.begin();sarcT!=pp.consumer.end();sarcT++) {
+//                if(!transition[sarcT->idx].significant) {
+//                    transition[sarcT->idx].significant = true;
+//                    unexpanded.insert(sarcT->idx);
+//                }
+//            }
+//        }
+//    }
+//}
+//
+//bool CPN::utilizeSlice() {
+//    for(int i=0;i<transitioncount;i++) {
+//        if(!transition[i].significant)
+//            return true;
+//    }
+//    return false;
+//}
