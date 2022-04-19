@@ -218,7 +218,6 @@ CPN_RGNode::CPN_RGNode() {
     int j = 0;
     for (auto i = 0; i <pcount; i++) {
         int pid = cpn->is_slice?cpn->slice_p[i]:i;
-        //int pid = cpn->mapPlace.find(*i)->second;
         marking[j].initiate(cpn->place[pid].tid, cpn->place[pid].sid);
         j++;
     }
@@ -263,12 +262,13 @@ void CPN_RGNode::printMarking() {
         }
     }
     /*print fireable bindings*/
-    for (int i = cpn->t_order.size() - 1; i >= 0; --i) {
-        int idx = cpn->t_order[i];
-        binding *p = enbindings[idx].listhead;
+    for (int i = cpn->transitioncount - 1; i >= 0; --i) {
+        if(cpn->is_slice && !cpn->transition[i].significant)
+            continue;
+        binding *p = enbindings[i].listhead;
         while (p) {
             cout << "{";
-            cout << cpn->transition[idx].id << ",";
+            cout << cpn->transition[i].id << ",";
             string bind;
             p->printBinding(bind);
             cout << bind << "}" << endl;
@@ -369,9 +369,8 @@ void CPN_RGNode::tran_FireableBindings(SHORTIDX tranid) {
     Binding_Available[tranid] = true;
 
     //slice?
-    if(cpn->is_slice)
-        if(!exist_in(cpn->slice_t,(index_t) tranid))
-            return;
+    if(cpn->is_slice && !cpn->transition[tranid].significant)
+        return;
 
     CPN_Transition &tran = cpn->transition[tranid];
     BindingList *bindingList = new BindingList[tran.producer.size()];
@@ -490,7 +489,7 @@ void CPN_RGNode::complete(const vector<VARID> unassignedvar,int level,binding *i
 
 bool CPN_RGNode::isfirable(string transname) {
     if (cpn->is_slice)
-        if (!exist_in(cpn->slice_t, cpn->mapTransition.find(transname)->second))
+        if (!cpn->transition[cpn->mapTransition.find(transname)->second].significant)
             return false;
     map<string, index_t>::iterator finditer;
     finditer = cpn->mapTransition.find(transname);
@@ -507,10 +506,8 @@ bool CPN_RGNode::isfirable(string transname) {
 }
 
 bool CPN_RGNode::isfirable(index_t argtranid) {
-    if (cpn->is_slice) {
-        if (!exist_in(cpn->slice_t, argtranid))
+    if (cpn->is_slice && !cpn->transition[argtranid].significant)
             return false;
-    }
     while (!Binding_Available[argtranid]) {
         tran_FireableBindings(argtranid);
     }
@@ -632,7 +629,7 @@ void CPN_RG::Generate() {
 void CPN_RG::Generate(CPN_RGNode *state) {
     for(unsigned int i=cpn->transitioncount-1;i>=0;--i) {
         //slice?
-        if(!exist_in(cpn->slice_t,i))
+        if(!cpn->transition[i].significant)
             continue;
 
         binding *p = state->enbindings[i].listhead;

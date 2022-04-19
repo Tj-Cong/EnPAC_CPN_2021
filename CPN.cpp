@@ -557,11 +557,14 @@ index_t CPN::getTPosition(string str) {
     }
 }
 
-void CPN::SLICE(vector<string> criteria_p, vector<string> criteria_t) {
+int CPN::SLICE(vector<string> criteria_p, vector<string> criteria_t) {
+    int size=0;
     slice_p.clear();
-    slice_t.clear();
+    //slice_t.clear();
+    for(auto i=0;i<cpn->transitioncount;i++)
+        cpn->transition[i].significant= false;
     vector<string> tmp_p, tmp_t;
-    vector<index_t> result_p,result_t;//result_p、result_t未排序
+    vector<index_t> result_p;
     for (auto i = criteria_p.begin(); i != criteria_p.end(); i++) {
         if (!exist_in(tmp_p, *i))
             tmp_p.push_back(*i);
@@ -582,18 +585,16 @@ void CPN::SLICE(vector<string> criteria_p, vector<string> criteria_t) {
             if (!p_pro.empty()) {
                 for (auto ipre = p_pro.begin(); ipre != p_pro.end(); ipre++) {
                     CTransition &t_p_pre = transition[ipre->idx];
-                    if (!exist_in(result_t, ipre->idx)) {
+                    if(!t_p_pre.significant)
                         tmp_t.push_back(t_p_pre.id);
-                    }
                 }
             }
             auto p_con = p.consumer;
             if (!p_con.empty()) {
                 for (auto icon = p_con.begin(); icon != p_con.end(); icon++) {
                     CTransition &t_p_con = transition[icon->idx];
-                    if (!exist_in(result_t, icon->idx)) {
+                    if(!t_p_con.significant)
                         tmp_t.push_back(t_p_con.id);
-                    }
                 }
             }
             tmp_p.erase(tmp_p.begin());
@@ -602,8 +603,10 @@ void CPN::SLICE(vector<string> criteria_p, vector<string> criteria_t) {
         if(!tmp_t.empty()) {
             auto t_idx=mapTransition.find(*tmp_t.begin())->second;
             CTransition &t = transition[t_idx];
-            if(!exist_in(result_t,t_idx))
-                result_t.push_back(t_idx);
+            if(!t.significant) {
+                t.significant = true;
+                ++size;
+            }
             auto t_pre = t.producer;
             if (!t_pre.empty()) {
                 for (auto ipre = t_pre.begin(); ipre != t_pre.end(); ipre++) {
@@ -625,7 +628,7 @@ void CPN::SLICE(vector<string> criteria_p, vector<string> criteria_t) {
             j++;
         }
     }
-    slice_t=result_t;
+    return size;
 }
 //void CPN::computeVis(set<index_t> &visItems, bool cardinality) {
 //    for(int i=0;i<transitioncount;i++)

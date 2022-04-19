@@ -39,7 +39,7 @@ typedef struct CPN_Transition
     string id;                   /*transition id*/
     condition_tree guard;        /*guard function*/
     bool hasguard;               /*hasguard=false => gurad is always evaluated to be true*/
-    //bool significant = false;
+    bool significant = false;    /*重要变迁——切片*/
     vector<CSArc> producer;
     vector<CSArc> consumer;
     vector<VARID> relvararray;   /*related variables*/
@@ -75,8 +75,8 @@ public:
 
     //slice+
     vector<index_t> slice_p;             /*切片库所*/
-    vector<index_t> slice_t;             /*切片变迁*/
-    vector<index_t> t_order;            /*t_order与cpn_transition的顺序一样，并未使用变迁序，用于切片时跳过非切片变迁*/
+    //vector<index_t> slice_t;             /*切片变迁*/
+    //vector<index_t> t_order;            /*t_order与cpn_transition的顺序一样，并未使用变迁序，用于切片时跳过非切片变迁*/
     bool is_slice;                      /*标识是否切片*/
     //slice-
     CPN();
@@ -120,7 +120,7 @@ public:
     /*print every tranition's related variable*/
     void printTransVar();
 
-    void SLICE(vector<string> criteria_p,vector<string> criteria_t);
+    int SLICE(vector<string> criteria_p,vector<string> criteria_t);//return significant_t.size()
 //    void computeVis(set<index_t> &visItems,bool cardinality);
 //
 //    void VISpread(set<index_t> &visTransitions);
