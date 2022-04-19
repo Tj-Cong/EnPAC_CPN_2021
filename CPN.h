@@ -76,7 +76,7 @@ public:
     //slice+
     vector<index_t> slice_p;             /*切片库所*/
     vector<index_t> slice_t;             /*切片变迁*/
-    vector<index_t> t_order;            /*变迁序*/
+    vector<index_t> t_order;            /*t_order与cpn_transition的顺序一样，并未使用变迁序，用于切片时跳过非切片变迁*/
     bool is_slice;                      /*标识是否切片*/
     //slice-
     CPN();
